@@ -21,8 +21,8 @@ target/
 
 
 ### Flatten Pom ###
-/.flattened-pom.xml
-/**/.flattened-pom.xml
+
+.flatten-pom.xml
 
 
 ### NetBeans ###
