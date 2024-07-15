@@ -13,6 +13,7 @@ import com.tinqinacademy.hotel.api.operations.registeruser.RegisterUserOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.core.services.SystemService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,7 +68,7 @@ public class SystemController {
     }
 
     @PutMapping("/room/{roomId}")
-    public ResponseEntity<EditRoomOutput> editRoom(@RequestBody EditRoomInput input, @PathVariable String roomId){
+    public ResponseEntity<EditRoomOutput> editRoom(@RequestBody @Valid EditRoomInput input, @PathVariable String roomId){
         return new ResponseEntity<>(systemService.editRoom(input),HttpStatus.OK);
     }
 

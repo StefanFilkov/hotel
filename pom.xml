@@ -8,10 +8,12 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.1</version>
     </parent>
+
     <packaging>pom</packaging>
     <groupId>com.tinqinacademy</groupId>
     <artifactId>hotel</artifactId>
     <version>${revision}</version>
+
     <name>hotel</name>
     <description>hotel</description>
 
@@ -24,10 +26,13 @@
     </modules>
 
 
-
     <properties>
         <java.version>21</java.version>
         <revision>0.0.1-SNAPSHOT</revision>
+        <web.mvc.version>2.6.0</web.mvc.version>
+        <flatten.mvn.version>1.6.0</flatten.mvn.version>
+        <jackson.databind.version>2.16.0</jackson.databind.version>
+        <jakarta.validation.version>3.1.0</jakarta.validation.version>
     </properties>
 
     <dependencies>
@@ -39,13 +44,13 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
+            <version>${web.mvc.version}</version>
         </dependency>
 
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.1.0</version>
+            <version>${jakarta.validation.version}</version>
         </dependency>
 
         <dependency>
@@ -56,7 +61,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.16.0</version>
+            <version>${jackson.databind.version}</version>
         </dependency>
 
         <dependency>
@@ -71,7 +76,36 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
 
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten.mvn.version}</version>
+                <configuration>
 
+                </configuration>
+                <executions>
+                    <!-- enable flattening -->
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <!-- ensure proper cleanup -->
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
