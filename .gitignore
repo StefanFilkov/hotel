@@ -19,10 +19,11 @@ target/
 *.iml
 *.ipr
 
-
-
+### env properties
+rest/src/main/resources/env.properties
+/compose.yaml
 ### Flatten Pom ###
-**/*.flatten-pom.xml
+*/.flatten-pom.xml
 .flattened-pom.xml
 
 

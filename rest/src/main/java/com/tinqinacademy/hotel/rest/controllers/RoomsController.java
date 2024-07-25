@@ -2,8 +2,12 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.models.outputs.RoomOutput;
 import com.tinqinacademy.hotel.api.operations.addroom.RoomInput;
-import com.tinqinacademy.hotel.api.operations.bookroombyid.BookRoomByIdInput;
+import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdInput;
+import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdOutput;
+import com.tinqinacademy.hotel.api.operations.checkroomavailability.CheckRoomAvailabilityOutput;
 import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdOutput;
+import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
+import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdInput;
@@ -36,7 +40,7 @@ public class RoomsController {
                     @ApiResponse(responseCode = "200", description = "Room edited successfully")
             })
     @PutMapping()
-    public ResponseEntity<String> editRoom() {
+    public ResponseEntity<EditRoomOutput> editRoom() {
         return new ResponseEntity<>(roomsService.editRoom(), HttpStatus.OK);
     }
 
@@ -49,7 +53,7 @@ public class RoomsController {
 
             })
     @DeleteMapping
-    public ResponseEntity<String> removeRoom() {
+    public ResponseEntity<DeleteRoomOutput> removeRoom() {
         return new ResponseEntity<>(roomsService.removeRoom(), HttpStatus.OK);
     }
 
@@ -63,8 +67,8 @@ public class RoomsController {
             description = "Books a room"
     )
     @PostMapping("/book")
-    public ResponseEntity<String> bookRoom() {
-        return new ResponseEntity<>(roomsService.bookRoom(), HttpStatus.OK);
+    public ResponseEntity<ReserveRoomByIdOutput> bookRoom(@RequestBody ReserveRoomByIdInput input) {
+        return new ResponseEntity<>(roomsService.reserveRoom(input), HttpStatus.OK);
     }
 
 
@@ -74,7 +78,7 @@ public class RoomsController {
     })
     @Operation(summary = "Checks if room is available", description = "Checks if room is available")
     @GetMapping("/check")
-    public ResponseEntity<Boolean> checkRoomsAvailability() {
+    public ResponseEntity<CheckRoomAvailabilityOutput> checkRoomsAvailability() {
         return new ResponseEntity<>(roomsService.checkRoomAvailability(), HttpStatus.OK);
     }
 
@@ -115,7 +119,7 @@ public class RoomsController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<Void> bookRoomById(@PathVariable String id,@RequestBody BookRoomByIdInput input){
+    public ResponseEntity<Void> bookRoomById(@PathVariable String id,@RequestBody ReserveRoomByIdInput input){
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

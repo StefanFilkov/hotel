@@ -19,6 +19,10 @@
             <artifactId>core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jdbc</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

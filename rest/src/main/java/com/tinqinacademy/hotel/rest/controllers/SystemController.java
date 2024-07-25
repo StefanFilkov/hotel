@@ -14,20 +14,26 @@ import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.core.services.SystemService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/system")
 public class SystemController {
+
     private final SystemService systemService;
+
+    @Autowired
     public SystemController(SystemService systemService){
         this.systemService = systemService;
     }
+
     @PostMapping("/register")
     public ResponseEntity<RegisterUserOutput> registerUser(@RequestBody RegisterUserInput input){
         return new ResponseEntity<>(systemService.registerUser(input), HttpStatus.OK);
@@ -63,12 +69,13 @@ public class SystemController {
     }
 
     @PostMapping("/room")
-    public ResponseEntity<CreateRoomOutput> createRoom(CreateRoomInput input){
+    public ResponseEntity<CreateRoomOutput> createRoom(@RequestBody CreateRoomInput input){
         return new ResponseEntity<>(systemService.createRoom(input),HttpStatus.OK);
     }
 
     @PutMapping("/room/{roomId}")
     public ResponseEntity<EditRoomOutput> editRoom(@RequestBody @Valid EditRoomInput input, @PathVariable String roomId){
+        input.setId(UUID.fromString(roomId));
         return new ResponseEntity<>(systemService.editRoom(input),HttpStatus.OK);
     }
 

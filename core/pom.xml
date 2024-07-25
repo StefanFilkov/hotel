@@ -19,6 +19,11 @@
             <artifactId>api</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>com.tinqinacademy</groupId>
+            <artifactId>persistence</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 
 

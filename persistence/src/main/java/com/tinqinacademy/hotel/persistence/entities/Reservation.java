@@ -1,0 +1,39 @@
+package com.tinqinacademy.hotel.persistence.entities;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
+@Entity
+@Table(name = "reservations")
+public class Reservation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
+    @ManyToOne(targetEntity = Room.class)
+    private Room room;
+
+    private BigDecimal fullPrice;
+
+
+    @ManyToOne(targetEntity = User.class)
+    private User user;
+
+    @ManyToMany(targetEntity = Guest.class)
+    private List<Guest> guests;
+}
