@@ -57,9 +57,9 @@ public class RoomsServiceImpl implements RoomsService {
         log.info("Start of bookRoom");
 
 
-        List<Guest> guests= getGuests(input.getGuestList());
+        List<Guest> guests = getGuests(input.getGuestList());
 
-        Room room = roomRepository.findById(input.getRoomId()).orElse(null);
+        Room room = roomRepository.findById(input.getRoomId()).orElseThrow();
 
         if (ObjectUtils.isEmpty(room)) {
             throw new RoomNotFoundException("Room not found");
@@ -87,7 +87,7 @@ public class RoomsServiceImpl implements RoomsService {
         return ReserveRoomByIdOutput.builder().build();
     }
 
-    private List<Guest> getGuests(List<GuestInput> guestList){
+    private List<Guest> getGuests(List<GuestInput> guestList) {
 
         Set<String> existingGuestsCardNumbers = guestList
                 .stream()
@@ -162,7 +162,11 @@ public class RoomsServiceImpl implements RoomsService {
 
         Room room = roomRepository.findById(id).orElseThrow(() -> new RoomNotFoundException("Room not found"));
         List<Reservation> reservations = reservationRepository.findAllByRoomId(id);
-        List<LocalDate> datesOccupied = reservations.stream().flatMap(reservation -> getDatesOccupied(reservation).stream()).toList();
+        List<LocalDate> datesOccupied = reservations
+                .stream()
+                .flatMap(reservation -> getDatesOccupied(reservation).stream())
+                .toList();
+
         GetRoomByIdOutput result = conversionService.convert(room, GetRoomByIdOutput.GetRoomByIdOutputBuilder.class)
                 .datesOccupied(datesOccupied)
                 .build();
@@ -173,8 +177,10 @@ public class RoomsServiceImpl implements RoomsService {
     }
 
     private List<LocalDate> getDatesOccupied(Reservation reservations) {
+
         LocalDate startdate = reservations.getStartDate();
-        List<LocalDate> result= new ArrayList<>();
+        List<LocalDate> result = new ArrayList<>();
+
         while (startdate.isBefore(reservations.getEndDate())) {
             result.add(startdate);
             startdate = startdate.plusDays(1);
@@ -188,6 +194,7 @@ public class RoomsServiceImpl implements RoomsService {
         log.info("Start deleteBooking with id: {}", id);
 
         DeleteBookingByIdOutput result = DeleteBookingByIdOutput.builder().build();
+
         log.info("End of deleteBooking result: {}", result.toString());
         return result;
     }
