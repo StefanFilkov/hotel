@@ -21,6 +21,7 @@ target/
 
 ### env properties
 rest/src/main/resources/env.properties
+rest/src/main/resources/data-postgresql.sql
 /compose.yaml
 ### Flatten Pom ###
 */.flatten-pom.xml
