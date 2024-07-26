@@ -21,6 +21,8 @@ public class RoomToRoomOutput implements Converter<Room, RoomOutput> {
                         .toList())
                 .floor(source.getRoomFloor())
                 .id(source.getId())
+                .price(source.getRoomPrice())
+                .number(source.getRoomNumber())
                 .build();
     }
 }
