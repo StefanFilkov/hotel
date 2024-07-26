@@ -219,16 +219,15 @@ public class RoomsServiceImpl implements RoomsService {
         return result;
     }
 
-    private List<LocalDate> getDatesOccupied(Reservation reservations) {
+    private List<LocalDate> getDatesOccupied(Reservation reservation) {
+        log.info("Start getRoomById reservation: {}", reservation.toString());
 
-        LocalDate startdate = reservations.getStartDate();
-        List<LocalDate> result = new ArrayList<>();
+        List<LocalDate> result = reservation
+                .getStartDate()
+                .datesUntil(reservation.getEndDate().plusDays(1))
+                .collect(Collectors.toList());
 
-        while (startdate.isBefore(reservations.getEndDate())) {
-            result.add(startdate);
-            startdate = startdate.plusDays(1);
-        }
-
+        log.info("End getRoomById result: {}", result);
         return result;
     }
 

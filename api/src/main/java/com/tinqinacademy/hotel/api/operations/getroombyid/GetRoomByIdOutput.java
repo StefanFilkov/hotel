@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.getroombyid;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -20,5 +21,7 @@ public class GetRoomByIdOutput {
     private BigDecimal price;
     private List<String> beds;
     private String bathroomTypes;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private List<LocalDate> datesOccupied;
 }
