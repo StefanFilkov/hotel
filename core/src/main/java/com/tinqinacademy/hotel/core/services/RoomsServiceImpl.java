@@ -199,25 +199,38 @@ public class RoomsServiceImpl implements RoomsService {
     @Override
     public GetRoomByIdOutput getRoomById(GetRoomByIdInput input) {
         log.info("Start getRoomById input: {}", input.toString());
-        GetRoomByIdOutput result = GetRoomByIdOutput.builder().build();
-//        GetRoomByIdOutput result = GetRoomByIdOutput
-//                .builder()
-//                .room(RoomOutput
-//                        .builder()
-//                        .price(BigDecimal.valueOf(12.4))
-//                        .build())
-//                .datesOccupied(new ArrayList<>(List.of(LocalDate.MAX)))
-//                .build();
+        UUID id = input.getId();
+
+        Room room = roomRepository.findById(id).orElseThrow(() -> new RoomNotFoundException("Room not found"));
+        List<Reservation> reservations = reservationRepository.findAllByRoomId(id);
+        List<LocalDate> datesOccupied = reservations
+                .stream()
+                .flatMap(reservation -> getDatesOccupied(reservation).stream())
+                .toList();
+
+        GetRoomByIdOutput result = conversionService.convert(room, GetRoomByIdOutput.GetRoomByIdOutputBuilder.class)
+                .datesOccupied(datesOccupied)
+                .build();
+
+
         log.info("End of getRoomById result: {}", result.toString());
         return result;
     }
 
+    private List<LocalDate> getDatesOccupied(Reservation reservation) {
+
+        return reservation
+                .getStartDate()
+                .datesUntil(reservation.getEndDate().plusDays(1))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public DeleteBookingByIdOutput deleteBooking(String id) {
         log.info("Start deleteBooking with id: {}", id);
 
         DeleteBookingByIdOutput result = DeleteBookingByIdOutput.builder().build();
+
         log.info("End of deleteBooking result: {}", result.toString());
         return result;
     }
