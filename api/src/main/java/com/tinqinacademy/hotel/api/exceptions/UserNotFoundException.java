@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.exceptions;
+package com.tinqinacademy.hotel.api.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

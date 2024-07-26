@@ -92,7 +92,8 @@ public class RoomsController {
     )
     @PostMapping
     public ResponseEntity<RoomOutput> addRoom(@RequestBody RoomInput input) {
-        return new ResponseEntity<>(roomsService.addRoom(input), HttpStatus.CREATED);
+        RoomOutput result = roomsService.addRoom(input);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @GetMapping
