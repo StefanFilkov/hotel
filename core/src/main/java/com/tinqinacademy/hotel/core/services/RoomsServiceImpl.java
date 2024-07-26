@@ -14,9 +14,9 @@ import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdInput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdOutput;
+import com.tinqinacademy.hotel.core.exceptions.RoomNotFoundException;
 import com.tinqinacademy.hotel.core.exceptions.UserNotFoundException;
 import com.tinqinacademy.hotel.persistence.entities.*;
-import com.tinqinacademy.hotel.core.exceptions.RoomNotFoundException;
 import com.tinqinacademy.hotel.persistence.models.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +24,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Slf4j
