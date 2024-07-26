@@ -32,69 +32,69 @@ public class RoomsController {
         this.roomsService = roomsService;
     }
 
-//    @Operation(
-//            summary = "Edits a room",
-//            description = "Edits a room",
-//            responses = {
-//                    @ApiResponse(responseCode = "404", description = "Room does not exist"),
-//                    @ApiResponse(responseCode = "200", description = "Room edited successfully")
-//            })
-//    @PutMapping()
-//    public ResponseEntity<EditRoomOutput> editRoom() {
-//        return new ResponseEntity<>(roomsService.editRoom(), HttpStatus.OK);
-//    }
-//
-//    @Operation(
-//            summary = "Removes a room",
-//            description = "Removes a room",
-//            responses = {
-//                    @ApiResponse(responseCode = "404", description = "Room does not exist"),
-//                    @ApiResponse(responseCode = "200", description = "Room deleted")
-//
-//            })
-//    @DeleteMapping
-//    public ResponseEntity<DeleteRoomOutput> removeRoom() {
-//        return new ResponseEntity<>(roomsService.removeRoom(), HttpStatus.OK);
-//    }
-//
-//
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Room Booked successfully"),
-//            @ApiResponse(responseCode = "404", description = "Room not found")
-//    })
-//    @Operation(
-//            summary = "Books a room",
-//            description = "Books a room"
-//    )
-//    @PostMapping("/book")
-//    public ResponseEntity<ReserveRoomByIdOutput> bookRoom(@RequestBody ReserveRoomByIdInput input) {
-//        return new ResponseEntity<>(roomsService.reserveRoom(input), HttpStatus.OK);
-//    }
-//
-//
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Success"),
-//            @ApiResponse(responseCode = "404", description = "Room not found")
-//    })
-//    @Operation(summary = "Checks if room is available", description = "Checks if room is available")
-//    @GetMapping("/check")
-//    public ResponseEntity<CheckRoomAvailabilityOutput> checkRoomsAvailability() {
-//        return new ResponseEntity<>(roomsService.checkRoomAvailability(), HttpStatus.OK);
-//    }
-//
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Success"),
-//            @ApiResponse(responseCode = "404", description = "Room not found")
-//    })
-//    @Operation(
-//            summary = "Adds a room",
-//            description = "Adds a room"
-//    )
-//
-//    @PostMapping()
-//    public ResponseEntity<RoomOutput> addRoom(@RequestBody RoomInput input) {
-//        return new ResponseEntity<>(roomsService.addRoom(input), HttpStatus.CREATED);
-//    }
+    @Operation(
+            summary = "Edits a room",
+            description = "Edits a room",
+            responses = {
+                    @ApiResponse(responseCode = "404", description = "Room does not exist"),
+                    @ApiResponse(responseCode = "200", description = "Room edited successfully")
+            })
+    @PutMapping()
+    public ResponseEntity<EditRoomOutput> editRoom() {
+        return new ResponseEntity<>(roomsService.editRoom(), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Removes a room",
+            description = "Removes a room",
+            responses = {
+                    @ApiResponse(responseCode = "404", description = "Room does not exist"),
+                    @ApiResponse(responseCode = "200", description = "Room deleted")
+
+            })
+    @DeleteMapping
+    public ResponseEntity<DeleteRoomOutput> removeRoom() {
+        return new ResponseEntity<>(roomsService.removeRoom(), HttpStatus.OK);
+    }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Room Booked successfully"),
+            @ApiResponse(responseCode = "404", description = "Room not found")
+    })
+    @Operation(
+            summary = "Books a room",
+            description = "Books a room"
+    )
+    @PostMapping("/book")
+    public ResponseEntity<ReserveRoomByIdOutput> bookRoom(@RequestBody ReserveRoomByIdInput input) {
+        return new ResponseEntity<>(roomsService.reserveRoom(input), HttpStatus.OK);
+    }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "404", description = "Room not found")
+    })
+    @Operation(summary = "Checks if room is available", description = "Checks if room is available")
+    @GetMapping("/check")
+    public ResponseEntity<CheckRoomAvailabilityOutput> checkRoomsAvailability() {
+        return new ResponseEntity<>(roomsService.checkRoomAvailability(), HttpStatus.OK);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "404", description = "Room not found")
+    })
+    @Operation(
+            summary = "Adds a room",
+            description = "Adds a room"
+    )
+    @PostMapping
+    public ResponseEntity<RoomOutput> addRoom(@RequestBody RoomInput input) {
+        RoomOutput result = roomsService.addRoom(input);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
 
     @GetMapping
     public ResponseEntity<GetRoomOutput> getRoom(@RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam Integer bedCount, @RequestParam String bedType, @RequestParam String bathroomType){

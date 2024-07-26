@@ -1,6 +1,8 @@
 package com.tinqinacademy.hotel.core.services;
 
 
+import com.tinqinacademy.hotel.api.exceptions.BedTypeNotValidException;
+import com.tinqinacademy.hotel.api.exceptions.InvalidBathroomTypeException;
 import com.tinqinacademy.hotel.api.models.inputs.GuestInput;
 import com.tinqinacademy.hotel.api.models.outputs.RoomOutput;
 import com.tinqinacademy.hotel.api.operations.addroom.RoomInput;
@@ -14,9 +16,10 @@ import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdInput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdOutput;
-import com.tinqinacademy.hotel.core.exceptions.RoomNotFoundException;
-import com.tinqinacademy.hotel.core.exceptions.UserNotFoundException;
+import com.tinqinacademy.hotel.api.exceptions.RoomNotFoundException;
+import com.tinqinacademy.hotel.api.exceptions.UserNotFoundException;
 import com.tinqinacademy.hotel.persistence.entities.*;
+import com.tinqinacademy.hotel.persistence.models.enums.BathroomTypes;
 import com.tinqinacademy.hotel.persistence.models.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +87,9 @@ public class RoomsServiceImpl implements RoomsService {
 
 
         log.info("End of bookRoom");
-        return ReserveRoomByIdOutput.builder().build();
+        return ReserveRoomByIdOutput
+                .builder()
+                .build();
     }
 
     private List<Guest> getGuests(List<GuestInput> guestList) {
@@ -113,18 +118,56 @@ public class RoomsServiceImpl implements RoomsService {
     public RoomOutput addRoom(RoomInput input) {
         log.info("Start addRoom input: {}", input.toString());
 
-        List<BedSize> bedSizeList = input.getBedTypes().stream().map(BedSize::getByCode).toList();
-
-        List<Bed> beds = bedRepository.findAll().stream().filter(bed -> bedSizeList.contains(bed.getType())).toList();
+        validateRoomInput(input);
+        List<Bed> beds = getBedsByCode(input.getBedTypes());
 
         Room room = conversionService.convert(input, Room.RoomBuilder.class).bedSizes(beds).build();
         roomRepository.save(room);
+
         RoomOutput result = conversionService.convert(room, RoomOutput.class);
-        log.info("End of addRoom result: {}", result.toString());
+
+        log.info("End of addRoom result: {}", result);
         return result;
 
     }
+    private void validateRoomInput(RoomInput input){
+        log.info("Start validateRoomInput input: {}", input);
 
+        String bathroomType = input.getBathroomTypes();
+        if (BathroomTypes.UNKNOWN.equals(BathroomTypes.getByCode(bathroomType))){
+            log.error("Invalid bathroom type for input: {}", input);
+            throw new InvalidBathroomTypeException();
+        }
+
+        List<String> beds = input.getBedTypes();
+        beds.stream()
+                .filter(bed -> BedSize.UNKNOWN.equals(BedSize.getByCode(bed)))
+                .findFirst()
+                .ifPresent(bed -> {
+                    log.error("Invalid bed types for input: {}", input);
+                    throw new BedTypeNotValidException(bed);
+                });
+
+        log.info("End validateRoomInput successful");
+    }
+
+    private List<Bed> getBedsByCode(List<String> bedTypes){
+        log.info("Start getBedsByCode input: {}", bedTypes);
+
+        List<BedSize> bedSizeList = bedTypes
+                .stream()
+                .map(BedSize::getByCode)
+                .toList();
+
+        List<Bed> beds = bedRepository
+                .findAll()
+                .stream()
+                .filter(bed -> bedSizeList.contains(bed.getType()))
+                .toList();
+
+        log.info("End getBedsByCode result: {}", beds);
+        return beds;
+    }
 
     @Override
     public CheckRoomAvailabilityOutput checkRoomAvailability() {
