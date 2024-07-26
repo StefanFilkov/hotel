@@ -27,9 +27,11 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -58,9 +60,9 @@ public class RoomsServiceImpl implements RoomsService {
         log.info("Start of bookRoom");
 
 
-        List<Guest> guests= getGuests(input.getGuestList());
+        List<Guest> guests = getGuests(input.getGuestList());
 
-        Room room = roomRepository.findById(input.getRoomId()).orElse(null);
+        Room room = roomRepository.findById(input.getRoomId()).orElseThrow();
 
         if (ObjectUtils.isEmpty(room)) {
             throw new RoomNotFoundException("Room not found");
@@ -90,7 +92,7 @@ public class RoomsServiceImpl implements RoomsService {
                 .build();
     }
 
-    private List<Guest> getGuests(List<GuestInput> guestList){
+    private List<Guest> getGuests(List<GuestInput> guestList) {
 
         Set<String> existingGuestsCardNumbers = guestList
                 .stream()

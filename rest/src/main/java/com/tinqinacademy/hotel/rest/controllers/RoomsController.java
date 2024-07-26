@@ -21,9 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/rooms")
 public class RoomsController {
 
     private final RoomsService roomsService;
@@ -110,13 +110,10 @@ public class RoomsController {
     }
 
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GetRoomByIdOutput> getRoomById(@PathVariable String id){
-        GetRoomByIdInput result = GetRoomByIdInput
-                .builder()
-                .id(id)
-                .build();
-        return new ResponseEntity<>(roomsService.getRoomById(result), HttpStatus.OK);
+    @GetMapping(URLMappings.GET_ROOM_BY_ID)
+    public ResponseEntity<GetRoomByIdOutput> getRoomById(@PathVariable UUID roomId){
+        GetRoomByIdInput roomsServiceRoomById = GetRoomByIdInput.builder().id(roomId).build();
+        return new ResponseEntity<>(roomsService.getRoomById(roomsServiceRoomById), HttpStatus.OK);
     }
 
     @PostMapping("/{id}")
