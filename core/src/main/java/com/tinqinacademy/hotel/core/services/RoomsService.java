@@ -12,6 +12,8 @@ import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.addroom.RoomInput;
 import com.tinqinacademy.hotel.api.models.outputs.RoomOutput;
 
+import java.util.UUID;
+
 
 public interface RoomsService {
 

@@ -27,9 +27,11 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -58,9 +60,9 @@ public class RoomsServiceImpl implements RoomsService {
         log.info("Start of bookRoom");
 
 
-        List<Guest> guests= getGuests(input.getGuestList());
+        List<Guest> guests = getGuests(input.getGuestList());
 
-        Room room = roomRepository.findById(input.getRoomId()).orElse(null);
+        Room room = roomRepository.findById(input.getRoomId()).orElseThrow();
 
         if (ObjectUtils.isEmpty(room)) {
             throw new RoomNotFoundException("Room not found");
@@ -90,7 +92,7 @@ public class RoomsServiceImpl implements RoomsService {
                 .build();
     }
 
-    private List<Guest> getGuests(List<GuestInput> guestList){
+    private List<Guest> getGuests(List<GuestInput> guestList) {
 
         Set<String> existingGuestsCardNumbers = guestList
                 .stream()
@@ -199,25 +201,43 @@ public class RoomsServiceImpl implements RoomsService {
     @Override
     public GetRoomByIdOutput getRoomById(GetRoomByIdInput input) {
         log.info("Start getRoomById input: {}", input.toString());
-        GetRoomByIdOutput result = GetRoomByIdOutput.builder().build();
-//        GetRoomByIdOutput result = GetRoomByIdOutput
-//                .builder()
-//                .room(RoomOutput
-//                        .builder()
-//                        .price(BigDecimal.valueOf(12.4))
-//                        .build())
-//                .datesOccupied(new ArrayList<>(List.of(LocalDate.MAX)))
-//                .build();
+        UUID id = input.getId();
+
+        Room room = roomRepository.findById(id).orElseThrow(() -> new RoomNotFoundException("Room not found"));
+        List<Reservation> reservations = reservationRepository.findAllByRoomId(id);
+        List<LocalDate> datesOccupied = reservations
+                .stream()
+                .flatMap(reservation -> getDatesOccupied(reservation).stream())
+                .toList();
+
+        GetRoomByIdOutput result = conversionService.convert(room, GetRoomByIdOutput.GetRoomByIdOutputBuilder.class)
+                .datesOccupied(datesOccupied)
+                .build();
+
+
         log.info("End of getRoomById result: {}", result.toString());
         return result;
     }
 
+    private List<LocalDate> getDatesOccupied(Reservation reservations) {
+
+        LocalDate startdate = reservations.getStartDate();
+        List<LocalDate> result = new ArrayList<>();
+
+        while (startdate.isBefore(reservations.getEndDate())) {
+            result.add(startdate);
+            startdate = startdate.plusDays(1);
+        }
+
+        return result;
+    }
 
     @Override
     public DeleteBookingByIdOutput deleteBooking(String id) {
         log.info("Start deleteBooking with id: {}", id);
 
         DeleteBookingByIdOutput result = DeleteBookingByIdOutput.builder().build();
+
         log.info("End of deleteBooking result: {}", result.toString());
         return result;
     }

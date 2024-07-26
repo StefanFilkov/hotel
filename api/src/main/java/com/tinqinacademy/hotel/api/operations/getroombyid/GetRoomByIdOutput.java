@@ -1,10 +1,11 @@
 package com.tinqinacademy.hotel.api.operations.getroombyid;
 
-import com.tinqinacademy.hotel.api.models.outputs.RoomOutput;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,6 +14,11 @@ import java.util.List;
 @Builder
 @ToString
 public class GetRoomByIdOutput {
-    private RoomOutput room;
+    private UUID id;
+    private String number;
+    private Integer floor;
+    private BigDecimal price;
+    private List<String> beds;
+    private String bathroomTypes;
     private List<LocalDate> datesOccupied;
 }
