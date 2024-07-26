@@ -21,9 +21,9 @@ public class PopulateBeds implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         List<BedSize> bedSizeList = new ArrayList<>(Arrays.stream(BedSize.values()).toList());
-        List<BedSize> savedBedSize = bedRepository.findAll().stream().map(Bed::getType).toList();
+        List<BedSize> savedBedSize = new ArrayList<>(bedRepository.findAll().stream().map(Bed::getType).toList());
 
 
         if (bedSizeList.size() > savedBedSize.size()) {
