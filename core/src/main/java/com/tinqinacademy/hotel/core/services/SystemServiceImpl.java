@@ -210,7 +210,18 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public DeleteRoomOutput deleteRoom(DeleteRoomInput input) {
         log.info("Start deleteRoom input: {}", input.toString());
+
+        if(roomRepository.existsConstraintBedSizes(UUID.fromString(input.getId()))) {
+            roomRepository.deleteBedConstraint(UUID.fromString(input.getId()));
+        }
+        if (roomRepository.existsReservationConstraint(UUID.fromString(input.getId()))) {
+            roomRepository.deleteReservationConstraint(UUID.fromString(input.getId()));
+        }
+        if(roomRepository.existsById(UUID.fromString(input.getId()))) {
+            roomRepository.deleteById(UUID.fromString(input.getId()));
+        }
         DeleteRoomOutput result = DeleteRoomOutput.builder().build();
+
         log.info("End of deleteRoom result: {}", result.toString());
         return result;
     }
