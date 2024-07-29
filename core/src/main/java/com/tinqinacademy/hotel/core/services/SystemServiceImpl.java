@@ -40,29 +40,30 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public AddGuestsOutput addGuests(AddGuestInput input) {
         log.info("Start registerUser input: {}", input.toString());
-        //usersRepository.save(Users
-               // .builder()
-                      //  .birth_date(input.getBirthdate())
-                      //  .email(input.getEmail())
-                      //  .phone(input.getPhoneN())
-                      //  .lastName(input.getLastName())
-                      //  .firstName(input.getFirstName())
-               // .build());
-        //TODO List<Guest> guests = getGuests(input.getGuests());
 
-        AddGuestsOutput result = AddGuestsOutput.builder().build();
+        List<Guest> unknownGuests = saveUnknownGuests(input.getGuests());
+
+        AddGuestsOutput result = AddGuestsOutput
+                .builder()
+                .guests(unknownGuests.stream().map(guest -> conversionService.convert(guest,GuestInput.class)).toList())
+                .build();
+
         log.info("End of registerUser result: {}", result.toString());
         return result;
     }
 
-    private List<Guest> getGuests(List<GuestInput> guestList) {
+    private List<Guest> saveUnknownGuests(List<GuestInput> guestList) {
+        log.info("Start saveUnknownGuests input: {}", guestList.toString());
 
-        Set<String> existingGuestsCardNumbers = guestList
+        List<String> inputGuestCardNumbers = guestList.stream().map(GuestInput::getCardNumber).toList();
+
+        List<Guest> existingGuests = guestRepository.findAllByCardNumberIn(new ArrayList<>(inputGuestCardNumbers));
+
+        Set<String> existingGuestsCardNumbers = existingGuests
                 .stream()
-                .map(GuestInput::getCardNumber)
+                .map(Guest::getCardNumber)
                 .collect(Collectors.toSet());
 
-        List<Guest> existingGuests = guestRepository.findAllByCardNumberIn(new ArrayList<>(existingGuestsCardNumbers));
 
         List<Guest> unknownGuests = guestList
                 .stream()
@@ -70,10 +71,15 @@ public class SystemServiceImpl implements SystemService {
                 .map(guestInput -> conversionService.convert(guestInput, Guest.class))
                 .toList();
 
+
+
         List<Guest> result = new ArrayList<>(existingGuests);
+
         List<Guest> savedUnknownGuests = guestRepository.saveAll(unknownGuests);
+
         result.addAll(savedUnknownGuests);
 
+        log.info("End of saveUnknownGuests result: {}", result.toString());
         return result;
     }
 
