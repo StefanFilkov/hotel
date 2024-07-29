@@ -2,14 +2,15 @@ package com.tinqinacademy.hotel.core.services;
 
 import com.tinqinacademy.hotel.api.exceptions.RoomNotFoundException;
 import com.tinqinacademy.hotel.api.models.inputs.GuestInput;
+import com.tinqinacademy.hotel.api.models.outputs.GuestOutput;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomInput;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
-import com.tinqinacademy.hotel.api.operations.getregistrations.GetRegistrationInput;
-import com.tinqinacademy.hotel.api.operations.getregistrations.GetRegistrationOutput;
+import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportInput;
+import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportOutput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestInput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
@@ -24,11 +25,14 @@ import com.tinqinacademy.hotel.persistence.repository.ReservationRepository;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.tinqinacademy.hotel.persistence.entities.Bed;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.tinqinacademy.hotel.persistence.specifications.GuestSpecification.*;
 
 
 @Service
@@ -57,7 +61,7 @@ public class SystemServiceImpl implements SystemService {
 
         AddGuestsOutput result = AddGuestsOutput
                 .builder()
-                .guests(unknownGuests.stream().map(guest -> conversionService.convert(guest,GuestInput.class)).toList())
+                .guests(unknownGuests.stream().map(guest -> conversionService.convert(guest, GuestInput.class)).toList())
                 .build();
 
         log.info("End of registerUser result: {}", result.toString());
@@ -84,7 +88,6 @@ public class SystemServiceImpl implements SystemService {
                 .toList();
 
 
-
         List<Guest> result = new ArrayList<>(existingGuests);
 
         List<Guest> savedUnknownGuests = guestRepository.saveAll(unknownGuests);
@@ -96,29 +99,47 @@ public class SystemServiceImpl implements SystemService {
     }
 
 
-
     @Override
-    public GetRegistrationOutput getRegisteredUser(GetRegistrationInput input) {
+    public GetGuestReportOutput getGuestReport(GetGuestReportInput input) {
         log.info("Start getRegisteredUser input: {}", input.toString());
 
-            //TODO criteria builder
+        Set<Guest> allGuestsInTimePeriod = new HashSet<>(guestRepository.findByStartDateAndEndDate(input.getStartDate(), input.getEndDate()));
 
-        GetRegistrationOutput result = GetRegistrationOutput
+        List<Specification<Guest>> specifications = new ArrayList<>();
+        specifications.add(hasFirstName(input.getFirstName()));
+        specifications.add(hasLastName(input.getLastName()));
+        specifications.add(hasCardNumber(input.getCardIdN()));
+        specifications.add(hasCardIssueAuthority(input.getCardIssueAuthority()));
+        specifications.add(hasCardValidity(input.getCardValidityDate()));
+        specifications.add(hasCardIssueDate(input.getCardIssueDate()));
+        specifications.add(hasBirthDate(input.getBirthdate()));
+
+        List<Specification<Guest>> enteredFields = specifications.stream().filter(Objects::nonNull).toList();
+
+        Specification<Guest> finalSpecification = specificationBuilder(enteredFields);
+
+        Set<Guest> filteredGuests = new HashSet<>(guestRepository.findAll(finalSpecification));
+
+        List<Guest> resultGuests = allGuestsInTimePeriod.stream()
+                .filter(filteredGuests::contains)
+                .toList();
+
+        GetGuestReportOutput result = GetGuestReportOutput
                 .builder()
-                .firstName(input.getFirstName())
-                .lastName(input.getLastName())
-
-                .startDate(input.getStartDate())
-                .cardIdN(input.getCardIdN())
-                .cardIssueAuthority(input.getCardIssueAuthority())
-                .cardIssueDate(input.getCardIssueDate())
-                .cardValidityDate(input.getCardValidityDate())
-                .phoneN(input.getPhoneN())
-                .endDate(input.getEndDate())
+                .data(resultGuests.stream().map(request -> conversionService.convert(request, GuestOutput.class)).toList())
                 .build();
+
         log.info("End of getRegisteredUser result: {}", result.toString());
         return result;
 
+    }
+
+    private Specification<Guest> specificationBuilder(List<Specification<Guest>> specifications) {
+        Specification<Guest> result = specifications.get(0);
+        for (int i = 1; i < specifications.size(); i++) {
+            result = result.and(specifications.get(i));
+        }
+        return result;
     }
 
     @Override
@@ -179,12 +200,7 @@ public class SystemServiceImpl implements SystemService {
         log.info("Start updateRoom input: {}", input.toString());
         UpdateRoomOutput result = UpdateRoomOutput.builder().build();
 
-       // roomsRepository.patchRoom();
-
-
-
-
-
+        // roomsRepository.patchRoom();
 
 
         log.info("End of updateRoom result: {}", result.toString());

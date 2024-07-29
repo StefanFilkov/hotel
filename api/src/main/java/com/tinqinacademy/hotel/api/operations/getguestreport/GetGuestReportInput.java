@@ -1,8 +1,9 @@
-package com.tinqinacademy.hotel.api.operations.getregistrations;
+package com.tinqinacademy.hotel.api.operations.getguestreport;
 
 import lombok.*;
-import java.util.List;
+
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,17 +11,23 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @ToString
-public class GetRegistrationOutput {
+public class GetGuestReportInput {
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalDate cardIssueDate;
-    private LocalDate cardValidityDate;
-    private List<String> data;
 
     private String firstName;
     private String lastName;
-    private String phoneN;
+
+    private String cardIssueDate;
+    private String cardValidityDate;
     private String cardIdN;
     private String cardIssueAuthority;
+    private String birthdate;
+
+    private String phoneN;
+    private String roomN;
+
+    private List<String> data;
+
 
 }
