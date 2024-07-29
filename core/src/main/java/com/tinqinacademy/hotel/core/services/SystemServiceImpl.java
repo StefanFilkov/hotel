@@ -103,7 +103,7 @@ public class SystemServiceImpl implements SystemService {
     public GetRegistrationOutput getRegisteredUser(GetRegistrationInput input) {
         log.info("Start getRegisteredUser input: {}", input.toString());
 
-            //TODO da razbera kak e kriteria builder i da go polzwam tuka
+            //TODO criteria builder
 
         GetRegistrationOutput result = GetRegistrationOutput
                 .builder()
