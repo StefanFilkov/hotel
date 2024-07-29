@@ -15,10 +15,14 @@ public class GuestInput {
     private String lastName;
 
     private LocalDate cardIssueDate;
-    private LocalDate birthDate;
     private LocalDate cardValidity;
-    private String cardIssueAuthority;
+    private LocalDate birthDate;
     private String cardNumber;
+    private String cardIssueAuthority;
+    private LocalDate endDate;
+    private LocalDate startDate;
+    private String email;
+    private String phoneN;
 
 
 }
