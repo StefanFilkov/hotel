@@ -12,7 +12,6 @@ public class ReserveRoomByIdInputToReservationBuilder implements Converter<Reser
         return Reservation
                 .builder()
                 .startDate(source.getStartDate())
-                .endDate(source.getEndDate())
-                .fullPrice(source.getFullPrice());
+                .endDate(source.getEndDate());
     }
 }

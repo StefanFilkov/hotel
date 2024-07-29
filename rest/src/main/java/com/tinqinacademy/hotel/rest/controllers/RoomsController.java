@@ -66,7 +66,7 @@ public class RoomsController {
             summary = "Books a room",
             description = "Books a room"
     )
-    @PostMapping("/book")
+    @PostMapping(URLMappings.POST_BOOK_ROOM_BY_ID)
     public ResponseEntity<ReserveRoomByIdOutput> bookRoom(@RequestBody ReserveRoomByIdInput input) {
         return new ResponseEntity<>(roomsService.reserveRoom(input), HttpStatus.OK);
     }
@@ -112,7 +112,7 @@ public class RoomsController {
 
     @GetMapping(URLMappings.GET_ROOM_BY_ID)
     public ResponseEntity<GetRoomByIdOutput> getRoomById(@PathVariable UUID roomId){
-        GetRoomByIdInput roomsServiceRoomById = GetRoomByIdInput.builder().id(roomId).build();
+        GetRoomByIdInput roomsServiceRoomById = GetRoomByIdInput.builder().id(String.valueOf(roomId)).build();
         return new ResponseEntity<>(roomsService.getRoomById(roomsServiceRoomById), HttpStatus.OK);
     }
 
