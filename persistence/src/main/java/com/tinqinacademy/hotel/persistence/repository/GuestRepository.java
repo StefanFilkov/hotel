@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface GuestRepository extends JpaRepository<Guest, UUID> {
 
     List<Guest> findAllByCardNumberIn(List<String> cardNumbers);
+
 }

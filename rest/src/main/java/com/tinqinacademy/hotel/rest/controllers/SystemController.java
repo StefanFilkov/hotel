@@ -13,6 +13,9 @@ import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.core.services.SystemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +26,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/system")
+@RequestMapping
 public class SystemController {
 
     private final SystemService systemService;
@@ -39,7 +42,16 @@ public class SystemController {
 
     }
 
-    @GetMapping("/register")
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "404", description = "Room not found")
+    })
+    @Operation(
+            summary = "returns a report based on input",
+            description = "Implemented options:"
+    )
+    @GetMapping(URLMappings.GET_REPORT)
     public ResponseEntity<GetRegistrationOutput> getRegisteredUser(@RequestParam LocalDate startDate,
                                                                    @RequestParam String cardIdN,
                                                                    @RequestParam LocalDate cardIssueDate,
@@ -67,7 +79,7 @@ public class SystemController {
         return new ResponseEntity<>(systemService.getRegisteredUser(input),HttpStatus.OK);
     }
 
-    @PostMapping("/room")
+    @PostMapping(URLMappings.POST_CREATE_ROOM)
     public ResponseEntity<CreateRoomOutput> createRoom(@RequestBody CreateRoomInput input){
         return new ResponseEntity<>(systemService.createRoom(input),HttpStatus.OK);
     }

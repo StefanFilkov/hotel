@@ -14,14 +14,19 @@ import java.util.List;
 public class GetRegistrationInput {
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalDate cardIssueDate;
-    private LocalDate cardValidityDate;
-    private List<String> data;
+
     private String firstName;
     private String lastName;
-    private String phoneN;
+
+    private LocalDate cardIssueDate;
+    private LocalDate cardValidityDate;
     private String cardIdN;
     private String cardIssueAuthority;
+
+    private String phoneN;
     private String roomId;
+
+    private List<String> data;
+
 
 }
