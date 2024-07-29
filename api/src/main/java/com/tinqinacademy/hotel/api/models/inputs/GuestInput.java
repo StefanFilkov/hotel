@@ -3,8 +3,6 @@ package com.tinqinacademy.hotel.api.models.inputs;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Objects;
-import java.util.UUID;
 
 @Getter
 @Setter

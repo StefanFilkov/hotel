@@ -8,8 +8,8 @@ import com.tinqinacademy.hotel.api.operations.editroom.EditRoomInput;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getregistrations.GetRegistrationInput;
 import com.tinqinacademy.hotel.api.operations.getregistrations.GetRegistrationOutput;
-import com.tinqinacademy.hotel.api.operations.registeruser.RegisterUserInput;
-import com.tinqinacademy.hotel.api.operations.registeruser.RegisterUserOutput;
+import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestInput;
+import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.core.services.SystemService;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/system")
@@ -35,8 +34,8 @@ public class SystemController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterUserOutput> registerUser(@RequestBody RegisterUserInput input){
-        return new ResponseEntity<>(systemService.registerUser(input), HttpStatus.OK);
+    public ResponseEntity<AddGuestsOutput> registerUser(@RequestBody AddGuestInput input){
+        return new ResponseEntity<>(systemService.addGuests(input), HttpStatus.OK);
 
     }
 
@@ -75,7 +74,7 @@ public class SystemController {
 
     @PutMapping("/room/{roomId}")
     public ResponseEntity<EditRoomOutput> editRoom(@RequestBody @Valid EditRoomInput input, @PathVariable String roomId){
-        input.setId(UUID.fromString(roomId));
+        input.setId(roomId);
         return new ResponseEntity<>(systemService.editRoom(input),HttpStatus.OK);
     }
 

@@ -6,7 +6,6 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,7 +14,7 @@ import java.util.UUID;
 @Builder
 @ToString
 public class GetRoomByIdOutput {
-    private UUID id;
+    private String id;
     private String number;
     private Integer floor;
     private BigDecimal price;

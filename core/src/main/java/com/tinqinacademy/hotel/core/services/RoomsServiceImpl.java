@@ -3,7 +3,7 @@ package com.tinqinacademy.hotel.core.services;
 
 import com.tinqinacademy.hotel.api.exceptions.BedTypeNotValidException;
 import com.tinqinacademy.hotel.api.exceptions.InvalidBathroomTypeException;
-import com.tinqinacademy.hotel.api.models.inputs.GuestInput;
+import com.tinqinacademy.hotel.api.exceptions.RoomNotFoundException;
 import com.tinqinacademy.hotel.api.models.outputs.RoomOutput;
 import com.tinqinacademy.hotel.api.operations.addroom.RoomInput;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdInput;
@@ -16,21 +16,21 @@ import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdInput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdOutput;
-import com.tinqinacademy.hotel.api.exceptions.RoomNotFoundException;
-import com.tinqinacademy.hotel.api.exceptions.UserNotFoundException;
-import com.tinqinacademy.hotel.persistence.entities.*;
+import com.tinqinacademy.hotel.persistence.entities.Bed;
+import com.tinqinacademy.hotel.persistence.entities.Reservation;
+import com.tinqinacademy.hotel.persistence.entities.Room;
 import com.tinqinacademy.hotel.persistence.models.enums.BathroomTypes;
 import com.tinqinacademy.hotel.persistence.models.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repository.*;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -53,37 +53,22 @@ public class RoomsServiceImpl implements RoomsService {
         this.guestRepository = guestRepository;
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
+
     }
 
     @Override
     public ReserveRoomByIdOutput reserveRoom(ReserveRoomByIdInput input) {
         log.info("Start of bookRoom");
 
+        Room room = roomRepository.findById(UUID.fromString(input.getRoomId())).orElseThrow(() -> new RoomNotFoundException("Room not found"));
 
-        List<Guest> guests = getGuests(input.getGuestList());
-
-        Room room = roomRepository.findById(input.getRoomId()).orElseThrow();
-
-        if (ObjectUtils.isEmpty(room)) {
-            throw new RoomNotFoundException("Room not found");
-        }
-
-        User user = userRepository.findByPhone(input.getUserInput().getPhone()).orElse(null);
-
-        if (ObjectUtils.isEmpty(user)) {
-            throw new UserNotFoundException("User not found");
-        }
 
         Reservation build = conversionService.convert(input, Reservation.ReservationBuilder.class)
-                .guests(guests)
+                .fullPrice(calculateFullPrice(room, input.getStartDate(), input.getEndDate()))
                 .room(room)
-                .user(user)
                 .build();
 
         Reservation save = reservationRepository.save(build);
-
-
-        //Room rooms = roomRepository.findById(input.getRoomId()).orElseThrow(() -> new RoomNotFoundException("Room not found"));
 
 
         log.info("End of bookRoom");
@@ -92,26 +77,20 @@ public class RoomsServiceImpl implements RoomsService {
                 .build();
     }
 
-    private List<Guest> getGuests(List<GuestInput> guestList) {
+    private BigDecimal calculateFullPrice(Room room, LocalDate startDate, LocalDate endDate) {
+        log.info("Start addRoom input: room: {}; StartDate: {}; EndDate: {}", room, startDate, endDate);
 
-        Set<String> existingGuestsCardNumbers = guestList
-                .stream()
-                .map(GuestInput::getCardNumber)
-                .collect(Collectors.toSet());
+        List<LocalDate> dates = getDatesOccupied(Reservation
+                .builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .build());
 
-        List<Guest> existingGuests = guestRepository.findAllByCardNumberIn(new ArrayList<>(existingGuestsCardNumbers));
+        BigDecimal result = room.getRoomPrice().multiply(new BigDecimal(dates.size()));
 
-        List<Guest> unknownGuests = guestList
-                .stream()
-                .filter(guestInput -> !existingGuestsCardNumbers.contains(guestInput.getCardNumber()))
-                .map(guestInput -> conversionService.convert(guestInput, Guest.class))
-                .toList();
-
-        List<Guest> result = new ArrayList<>(existingGuests);
-        List<Guest> savedUnknownGuests = guestRepository.saveAll(unknownGuests);
-        result.addAll(savedUnknownGuests);
-
+        log.info("End of calculateFullPrice result: {}", result);
         return result;
+
     }
 
     @Override
@@ -130,11 +109,12 @@ public class RoomsServiceImpl implements RoomsService {
         return result;
 
     }
-    private void validateRoomInput(RoomInput input){
+
+    private void validateRoomInput(RoomInput input) {
         log.info("Start validateRoomInput input: {}", input);
 
         String bathroomType = input.getBathroomTypes();
-        if (BathroomTypes.UNKNOWN.equals(BathroomTypes.getByCode(bathroomType))){
+        if (BathroomTypes.UNKNOWN.equals(BathroomTypes.getByCode(bathroomType))) {
             log.error("Invalid bathroom type for input: {}", input);
             throw new InvalidBathroomTypeException();
         }
@@ -151,7 +131,7 @@ public class RoomsServiceImpl implements RoomsService {
         log.info("End validateRoomInput successful");
     }
 
-    private List<Bed> getBedsByCode(List<String> bedTypes){
+    private List<Bed> getBedsByCode(List<String> bedTypes) {
         log.info("Start getBedsByCode input: {}", bedTypes);
 
         List<BedSize> bedSizeList = bedTypes
@@ -201,7 +181,7 @@ public class RoomsServiceImpl implements RoomsService {
     @Override
     public GetRoomByIdOutput getRoomById(GetRoomByIdInput input) {
         log.info("Start getRoomById input: {}", input.toString());
-        UUID id = input.getId();
+        UUID id = UUID.fromString(input.getId());
 
         Room room = roomRepository.findById(id).orElseThrow(() -> new RoomNotFoundException("Room not found"));
         List<Reservation> reservations = reservationRepository.findAllByRoomId(id);
@@ -212,7 +192,7 @@ public class RoomsServiceImpl implements RoomsService {
 
         GetRoomByIdOutput result = conversionService.convert(room, GetRoomByIdOutput.GetRoomByIdOutputBuilder.class)
                 .datesOccupied(datesOccupied)
-                .id(room.getId())
+                .id(String.valueOf(room.getId()))
                 .price(room.getRoomPrice())
                 .build();
 

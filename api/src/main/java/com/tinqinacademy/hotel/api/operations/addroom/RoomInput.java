@@ -7,7 +7,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,7 +15,7 @@ import java.util.UUID;
 @Builder
 @ToString
 public class RoomInput {
-    private UUID id;
+    private String id;
     private String number;
 
 
