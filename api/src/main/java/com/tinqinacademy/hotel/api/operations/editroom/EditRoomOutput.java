@@ -8,5 +8,5 @@ import lombok.*;
 @Builder
 @ToString
 public class EditRoomOutput {
-    private final String id = "updated room Id";
+    private final String id;
 }
