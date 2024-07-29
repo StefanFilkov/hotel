@@ -20,16 +20,13 @@ public class EditRoomInput {
     @JsonIgnore
     private String id;
 
-    private List<String> beds;
+    private List<String> bedSizes;
 
 
     @Min(value = 0, message = "cannot be less than 0")
     @Max(value = 100, message = "cannot be more than 100")
     private Integer floor;
 
-
-    @Size(max = 12, message = "invalid string")
-    private String bedSize;
 
     @Size(max = 12, message = "invalid string")
     private String bathroomType;

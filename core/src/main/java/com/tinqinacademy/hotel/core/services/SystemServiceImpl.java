@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.core.services;
 
+import com.tinqinacademy.hotel.api.exceptions.RoomNotFoundException;
 import com.tinqinacademy.hotel.api.models.inputs.GuestInput;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomOutput;
@@ -26,10 +27,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import com.tinqinacademy.hotel.persistence.entities.Bed;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -156,23 +154,22 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public EditRoomOutput editRoom(EditRoomInput input) {
         log.info("Start editRoom input: {}", input.toString());
-//        Rooms room = Rooms
-//                .builder()
-//                .room_id(input.getId())
-//                .room_floor(input.getFloor())
-//                .room_number(input.getRoomN())
-//                .room_price(input.getPrice())
-//                .room_bathroom_types(BathroomTypes.getByCode(input.getBathroomType().toString()))
-//                .build();
-//
-//        List<Bed> newBeds = new ArrayList<>();
-//        input.getBeds().forEach(bed -> newBeds.add(Bed.getByCode(bed.toString())));
-//
-//        roomsRepository.putRoom(room,newBeds);
-//
-//
+        Room existingRoom = roomRepository.findById(UUID.fromString(input.getId())).orElseThrow(() -> new RoomNotFoundException("room not found"));
 
-        EditRoomOutput result = EditRoomOutput.builder().build();
+        Room room = Room
+                .builder()
+                .id(existingRoom.getId())
+                .roomNumber(input.getRoomN())
+                .roomFloor(input.getFloor())
+                .roomPrice(input.getPrice())
+                .bedSizes(input.getBedSizes().stream().map(bedType -> bedRepository.findByType(BedSize.getByCode(bedType)).get()).toList())
+                .roomBathroomType(BathroomTypes.getByCode(input.getBathroomType()))
+                .build();
+
+        roomRepository.save(room);
+
+        EditRoomOutput result = EditRoomOutput.builder().id(String.valueOf(room.getId())).build();
+
         log.info("End of editRoom result: {}", result.toString());
         return result;
     }
