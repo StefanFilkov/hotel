@@ -84,7 +84,7 @@ public class SystemController {
         return new ResponseEntity<>(systemService.createRoom(input),HttpStatus.OK);
     }
 
-    @PutMapping("/room/{roomId}")
+    @PutMapping(URLMappings.PUT_UPDATE_ROOM)
     public ResponseEntity<EditRoomOutput> editRoom(@RequestBody @Valid EditRoomInput input, @PathVariable String roomId){
         input.setId(roomId);
         return new ResponseEntity<>(systemService.editRoom(input),HttpStatus.OK);
