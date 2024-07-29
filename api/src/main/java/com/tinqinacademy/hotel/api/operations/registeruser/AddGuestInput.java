@@ -1,8 +1,10 @@
 package com.tinqinacademy.hotel.api.operations.registeruser;
 
+import com.tinqinacademy.hotel.api.models.inputs.GuestInput;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,7 +12,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @ToString
-public class RegisterUserInput {
+public class AddGuestInput {
+
+    List<GuestInput> guests;
     private LocalDate endDate;
     private LocalDate startDate;
     private LocalDate cardValidity;

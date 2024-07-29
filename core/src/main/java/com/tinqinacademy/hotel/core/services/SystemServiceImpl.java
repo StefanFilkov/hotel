@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.core.services;
 
+import com.tinqinacademy.hotel.api.models.inputs.GuestInput;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
@@ -8,29 +9,36 @@ import com.tinqinacademy.hotel.api.operations.editroom.EditRoomInput;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getregistrations.GetRegistrationInput;
 import com.tinqinacademy.hotel.api.operations.getregistrations.GetRegistrationOutput;
-import com.tinqinacademy.hotel.api.operations.registeruser.RegisterUserInput;
-import com.tinqinacademy.hotel.api.operations.registeruser.RegisterUserOutput;
+import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
+import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
-
+import com.tinqinacademy.hotel.persistence.entities.Guest;
+import com.tinqinacademy.hotel.persistence.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
 @Slf4j
 public class SystemServiceImpl implements SystemService {
+    private final ConversionService conversionService;
+    private final GuestRepository guestRepository;
 
-    //private final UsersRepository usersRepository;
-   // private final  RoomsRepositoryImpl roomsRepository;
-   // @Autowired
-   // public SystemServiceImpl(UsersRepository usersRepository, RoomsRepositoryImpl roomsRepository) {
-   //     this.usersRepository = usersRepository;
-   //     this.roomsRepository = roomsRepository;
-   // }
+    public SystemServiceImpl(ConversionService conversionService, GuestRepository guestRepository) {
+        this.conversionService = conversionService;
+        this.guestRepository = guestRepository;
+    }
+
 
     @Override
-    public RegisterUserOutput registerUser(RegisterUserInput input) {
+    public AddGuestsOutput addGuests(AddGuestInput input) {
         log.info("Start registerUser input: {}", input.toString());
         //usersRepository.save(Users
                // .builder()
@@ -40,11 +48,36 @@ public class SystemServiceImpl implements SystemService {
                       //  .lastName(input.getLastName())
                       //  .firstName(input.getFirstName())
                // .build());
+        //TODO List<Guest> guests = getGuests(input.getGuests());
 
-        RegisterUserOutput result = RegisterUserOutput.builder().build();
+        AddGuestsOutput result = AddGuestsOutput.builder().build();
         log.info("End of registerUser result: {}", result.toString());
         return result;
     }
+
+    private List<Guest> getGuests(List<GuestInput> guestList) {
+
+        Set<String> existingGuestsCardNumbers = guestList
+                .stream()
+                .map(GuestInput::getCardNumber)
+                .collect(Collectors.toSet());
+
+        List<Guest> existingGuests = guestRepository.findAllByCardNumberIn(new ArrayList<>(existingGuestsCardNumbers));
+
+        List<Guest> unknownGuests = guestList
+                .stream()
+                .filter(guestInput -> !existingGuestsCardNumbers.contains(guestInput.getCardNumber()))
+                .map(guestInput -> conversionService.convert(guestInput, Guest.class))
+                .toList();
+
+        List<Guest> result = new ArrayList<>(existingGuests);
+        List<Guest> savedUnknownGuests = guestRepository.saveAll(unknownGuests);
+        result.addAll(savedUnknownGuests);
+
+        return result;
+    }
+
+
 
     @Override
     public GetRegistrationOutput getRegisteredUser(GetRegistrationInput input) {

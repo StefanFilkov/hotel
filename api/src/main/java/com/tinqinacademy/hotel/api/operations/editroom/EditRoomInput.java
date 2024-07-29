@@ -1,7 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.editroom;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -10,7 +9,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,7 +18,7 @@ import java.util.UUID;
 @ToString
 public class EditRoomInput {
     @JsonIgnore
-    private UUID id;
+    private String id;
 
     private List<String> beds;
 
@@ -30,14 +28,14 @@ public class EditRoomInput {
     private Integer floor;
 
 
-    @Size(min = 0, max = 12, message = "invalid string")
+    @Size(max = 12, message = "invalid string")
     private String bedSize;
 
-    @Size(min = 0, max = 12, message = "invalid string")
+    @Size(max = 12, message = "invalid string")
     private String bathroomType;
 
-    @Size(min = 0, max = 12, message = "invalid string")
-    @Size(min = 0, max = 12, message = "invalid string")
+    @Size(max = 12, message = "invalid string")
+    @Size(max = 12, message = "invalid string")
     private String roomN;
 
     @Digits(integer = 4, fraction = 2, message = "invalid number")

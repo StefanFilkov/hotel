@@ -6,6 +6,6 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
-public class RegisterUserOutput {
+public class AddGuestsOutput {
     private final String message = "User registered";
 }
