@@ -24,15 +24,11 @@ public class Guest {
     private UUID id;
 
     private String firstName;
-
     private String lastName;
-
     private String cardNumber;
 
     private String cardIssueAuthority;
-
     private LocalDate cardValidity;
-
     private LocalDate cardIssueDate;
 
     private LocalDate birthDate;
