@@ -212,6 +212,8 @@ public class RoomsServiceImpl implements RoomsService {
 
         GetRoomByIdOutput result = conversionService.convert(room, GetRoomByIdOutput.GetRoomByIdOutputBuilder.class)
                 .datesOccupied(datesOccupied)
+                .id(room.getId())
+                .price(room.getRoomPrice())
                 .build();
 
 
@@ -220,11 +222,15 @@ public class RoomsServiceImpl implements RoomsService {
     }
 
     private List<LocalDate> getDatesOccupied(Reservation reservation) {
+        log.info("Start getRoomById reservation: {}", reservation.toString());
 
-        return reservation
+        List<LocalDate> result = reservation
                 .getStartDate()
                 .datesUntil(reservation.getEndDate().plusDays(1))
                 .collect(Collectors.toList());
+
+        log.info("End getRoomById result: {}", result);
+        return result;
     }
 
     @Override
