@@ -48,7 +48,7 @@ public class SystemServiceImpl implements SystemService {
                       //  .lastName(input.getLastName())
                       //  .firstName(input.getFirstName())
                // .build());
-        List<Guest> guests = getGuests(input.getGuests());
+        //TODO List<Guest> guests = getGuests(input.getGuests());
 
         AddGuestsOutput result = AddGuestsOutput.builder().build();
         log.info("End of registerUser result: {}", result.toString());

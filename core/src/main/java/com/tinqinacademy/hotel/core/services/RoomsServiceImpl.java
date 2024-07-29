@@ -42,16 +42,14 @@ public class RoomsServiceImpl implements RoomsService {
     private final RoomRepository roomRepository;
     private final ConversionService conversionService;
     private final BedRepository bedRepository;
-    private final GuestRepository guestRepository;
-    private final UserRepository userRepository;
+
     private final ReservationRepository reservationRepository;
 
-    public RoomsServiceImpl(RoomRepository roomRepository, ConversionService conversionService, BedRepository bedRepository, GuestRepository guestRepository, UserRepository userRepository, ReservationRepository reservationRepository) {
+    public RoomsServiceImpl(RoomRepository roomRepository, ConversionService conversionService, BedRepository bedRepository, ReservationRepository reservationRepository) {
         this.roomRepository = roomRepository;
         this.conversionService = conversionService;
         this.bedRepository = bedRepository;
-        this.guestRepository = guestRepository;
-        this.userRepository = userRepository;
+
         this.reservationRepository = reservationRepository;
 
     }
