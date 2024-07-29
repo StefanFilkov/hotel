@@ -10,8 +10,6 @@ import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportInput
 import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportOutput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestInput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.core.services.SystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping
@@ -36,11 +33,11 @@ public class SystemController {
         this.systemService = systemService;
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<AddGuestsOutput> registerUser(@RequestBody AddGuestInput input) {
-//        return new ResponseEntity<>(systemService.addGuests(input), HttpStatus.OK);
-//
-//    }
+    @PostMapping(URLMappings.POST_REGISTER_VISITOR)
+    public ResponseEntity<AddGuestsOutput> registerUser(@RequestBody AddGuestInput input) {
+        return new ResponseEntity<>(systemService.addGuests(input), HttpStatus.OK);
+
+    }
 
 
     @ApiResponses(value = {
@@ -97,9 +94,9 @@ public class SystemController {
 //        return new ResponseEntity<>(systemService.updateRoom(input), HttpStatus.OK);
 //    }
 //
-//    @DeleteMapping("/room/{roomId}")
-//    public ResponseEntity<DeleteRoomOutput> deleteRoom(@PathVariable String roomId) {
-//        DeleteRoomInput input = DeleteRoomInput.builder().id(roomId).build();
-//        return new ResponseEntity<>(systemService.deleteRoom(input), HttpStatus.OK);
-//    }
+    @DeleteMapping(URLMappings.DELETE_ROOM)
+    public ResponseEntity<DeleteRoomOutput> deleteRoom(@PathVariable String roomId) {
+        DeleteRoomInput input = DeleteRoomInput.builder().id(roomId).build();
+        return new ResponseEntity<>(systemService.deleteRoom(input), HttpStatus.OK);
+    }
 }
