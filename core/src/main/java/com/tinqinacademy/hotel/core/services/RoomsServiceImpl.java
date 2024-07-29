@@ -9,6 +9,7 @@ import com.tinqinacademy.hotel.api.operations.addroom.RoomInput;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdInput;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdOutput;
 import com.tinqinacademy.hotel.api.operations.checkroomavailability.CheckRoomAvailabilityOutput;
+import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdInput;
 import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
@@ -212,12 +213,13 @@ public class RoomsServiceImpl implements RoomsService {
     }
 
     @Override
-    public DeleteBookingByIdOutput deleteBooking(String id) {
+    public DeleteBookingByIdOutput deleteBooking(DeleteBookingByIdInput id) {
         log.info("Start deleteBooking with id: {}", id);
 
+        reservationRepository.deleteById(UUID.fromString(id.getId()));
         DeleteBookingByIdOutput result = DeleteBookingByIdOutput.builder().build();
 
-        log.info("End of deleteBooking result: {}", result.toString());
+        log.info("End of deleteBooking");
         return result;
     }
 

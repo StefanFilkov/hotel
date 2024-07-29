@@ -7,5 +7,4 @@ import lombok.*;
 @Builder
 @ToString
 public class DeleteBookingByIdOutput {
-    private final String message = "Delete successful";
 }

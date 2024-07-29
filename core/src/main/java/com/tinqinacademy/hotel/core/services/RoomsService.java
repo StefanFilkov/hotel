@@ -2,7 +2,9 @@ package com.tinqinacademy.hotel.core.services;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdInput;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdOutput;
 import com.tinqinacademy.hotel.api.operations.checkroomavailability.CheckRoomAvailabilityOutput;
+import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdInput;
 import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdOutput;
+import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdInput;
@@ -26,6 +28,6 @@ public interface RoomsService {
     GetRoomOutput getRoom(GetRoomInput input);
 
     GetRoomByIdOutput getRoomById(GetRoomByIdInput input);
-    DeleteBookingByIdOutput deleteBooking(String id);
+    DeleteBookingByIdOutput deleteBooking(DeleteBookingByIdInput id);
 
 }
