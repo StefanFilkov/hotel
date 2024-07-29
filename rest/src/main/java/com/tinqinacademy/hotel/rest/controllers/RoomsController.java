@@ -5,6 +5,7 @@ import com.tinqinacademy.hotel.api.operations.addroom.RoomInput;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdInput;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdOutput;
 import com.tinqinacademy.hotel.api.operations.checkroomavailability.CheckRoomAvailabilityOutput;
+import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdInput;
 import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
@@ -122,9 +123,9 @@ public class RoomsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{bookingId}")
+    @DeleteMapping(URLMappings.DELETE_BOOKING_BY_ID)
     public ResponseEntity<DeleteBookingByIdOutput> deleteBookingById(@PathVariable String bookingId){
-        return new ResponseEntity<>(roomsService.deleteBooking(bookingId),HttpStatus.OK);
+        return new ResponseEntity<>(roomsService.deleteBooking(DeleteBookingByIdInput.builder().id(bookingId).build()),HttpStatus.OK);
 
     }
 }
