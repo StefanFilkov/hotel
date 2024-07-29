@@ -15,7 +15,6 @@ public class RoomToGetRoomByIdOutputBuilder implements Converter<Room, GetRoomBy
                 .beds(source.getBedSizes().stream().map(Bed::toString).toList())
                 .floor(source.getRoomFloor())
                 .number(source.getRoomNumber())
-                .price(source.getRoomPrice())
                 .bathroomTypes(source.getRoomBathroomType().toString());
     }
 }

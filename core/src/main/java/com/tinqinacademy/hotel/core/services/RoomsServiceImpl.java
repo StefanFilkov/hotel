@@ -212,6 +212,8 @@ public class RoomsServiceImpl implements RoomsService {
 
         GetRoomByIdOutput result = conversionService.convert(room, GetRoomByIdOutput.GetRoomByIdOutputBuilder.class)
                 .datesOccupied(datesOccupied)
+                .id(room.getId())
+                .price(room.getRoomPrice())
                 .build();
 
 
