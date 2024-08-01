@@ -1,7 +1,7 @@
 package com.tinqinacademy.hotel.rest.exceptions;
 
-import com.tinqinacademy.hotel.api.errors.Error;
 import com.tinqinacademy.hotel.api.errors.Errors;
+import com.tinqinacademy.hotel.api.errors.OperationError;
 import com.tinqinacademy.hotel.rest.controllers.RoomsController;
 import com.tinqinacademy.hotel.rest.controllers.SystemController;
 import org.springframework.http.HttpStatus;
@@ -20,9 +20,10 @@ public class GlobalExceptionHandler {
         exception
                 .getBindingResult()
                 .getFieldErrors()
-                .forEach(fieldError -> errors.addError(Error.builder()
+                .forEach(fieldError -> errors.addError(OperationError
+                        .builder()
                         .message(String.format("'%s' %s", fieldError.getField(), fieldError.getDefaultMessage()))
-                        .errorCode(HttpStatus.BAD_REQUEST)
+                        .status(HttpStatus.BAD_REQUEST)
                         .build()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
 
