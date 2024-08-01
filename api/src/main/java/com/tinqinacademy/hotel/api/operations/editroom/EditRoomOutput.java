@@ -1,5 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.editroom;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.*;
 
 @Getter
@@ -7,6 +9,6 @@ import lombok.*;
 
 @Builder
 @ToString
-public class EditRoomOutput {
+public class EditRoomOutput implements OperationOutput {
     private final String id;
 }

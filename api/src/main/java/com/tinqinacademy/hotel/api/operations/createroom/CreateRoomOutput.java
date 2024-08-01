@@ -1,5 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.createroom;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +15,7 @@ import java.util.UUID;
 @Setter
 @Builder
 @ToString
-public class CreateRoomOutput {
+public class CreateRoomOutput implements OperationOutput {
     private UUID id;
 
     private String roomNumber;
