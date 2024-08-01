@@ -8,10 +8,9 @@ public class GuestSpecification {
     private static boolean isEmpty(String value) {
         return value != null && !value.isEmpty();
     }
+
     public static Specification<Guest> hasFirstName(final String firstName) {
-        return isEmpty(firstName)
-                ? (guest, query, cb) -> cb.equal(guest.get("firstName"), firstName)
-                : (root, query, cb) -> cb.conjunction();
+        return isEmpty(firstName) ? ((guest, query, cb) -> cb.equal(guest.get("firstName"), firstName)) : ((root, query, cb) -> cb.conjunction());
     }
 
     public static Specification<Guest> hasLastName(final String lastName) {

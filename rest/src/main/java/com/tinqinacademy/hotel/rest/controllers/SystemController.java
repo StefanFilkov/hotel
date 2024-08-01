@@ -10,6 +10,8 @@ import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportInput
 import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportOutput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestInput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
+import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.core.services.SystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -89,11 +91,12 @@ public class SystemController {
         return new ResponseEntity<>(systemService.editRoom(input), HttpStatus.OK);
     }
 
-//    @PatchMapping("/room/{roomId}")
-//    public ResponseEntity<UpdateRoomOutput> editRoom(@RequestBody UpdateRoomInput input, @PathVariable String roomId) {
-//        return new ResponseEntity<>(systemService.updateRoom(input), HttpStatus.OK);
-//    }
-//
+    @PatchMapping(URLMappings.PATCH_EDIT_ROOM)
+    public ResponseEntity<UpdateRoomOutput> editRoom(@RequestBody UpdateRoomInput input, @PathVariable String roomId) {
+        input.setId(roomId);
+        return new ResponseEntity<>(systemService.updateRoom(input), HttpStatus.OK);
+    }
+
     @DeleteMapping(URLMappings.DELETE_ROOM)
     public ResponseEntity<DeleteRoomOutput> deleteRoom(@PathVariable String roomId) {
         DeleteRoomInput input = DeleteRoomInput.builder().id(roomId).build();
