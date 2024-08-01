@@ -1,5 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.checkroomavailability;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.*;
 
 @Getter
@@ -7,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class CheckRoomAvailabilityOutput {
+public class CheckRoomAvailabilityOutput implements OperationOutput {
 }

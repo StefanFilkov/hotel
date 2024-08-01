@@ -1,5 +1,8 @@
 package com.tinqinacademy.hotel.core.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.tinqinacademy.hotel.api.exceptions.RoomNotFoundException;
 import com.tinqinacademy.hotel.api.models.inputs.GuestInput;
 import com.tinqinacademy.hotel.api.models.outputs.GuestOutput;
@@ -15,6 +18,7 @@ import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestInput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
+import com.tinqinacademy.hotel.persistence.entities.Bed;
 import com.tinqinacademy.hotel.persistence.entities.Guest;
 import com.tinqinacademy.hotel.persistence.entities.Room;
 import com.tinqinacademy.hotel.persistence.models.enums.BathroomTypes;
@@ -27,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import com.tinqinacademy.hotel.persistence.entities.Bed;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,13 +46,15 @@ public class SystemServiceImpl implements SystemService {
     private final ReservationRepository reservationRepository;
     private final BedRepository bedRepository;
     private final RoomRepository roomRepository;
+    private final ObjectMapper objectMapper;
 
-    public SystemServiceImpl(ConversionService conversionService, GuestRepository guestRepository, ReservationRepository reservationRepository, BedRepository bedRepository, RoomRepository roomRepository) {
+    public SystemServiceImpl(ConversionService conversionService, GuestRepository guestRepository, ReservationRepository reservationRepository, BedRepository bedRepository, RoomRepository roomRepository, ObjectMapper objectMapper) {
         this.conversionService = conversionService;
         this.guestRepository = guestRepository;
         this.reservationRepository = reservationRepository;
         this.bedRepository = bedRepository;
         this.roomRepository = roomRepository;
+        this.objectMapper = objectMapper;
     }
 
 
@@ -175,6 +180,7 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public EditRoomOutput editRoom(EditRoomInput input) {
         log.info("Start editRoom input: {}", input.toString());
+        //TODO move to private method
         Room existingRoom = roomRepository.findById(UUID.fromString(input.getId())).orElseThrow(() -> new RoomNotFoundException("room not found"));
 
         Room room = Room
@@ -183,7 +189,10 @@ public class SystemServiceImpl implements SystemService {
                 .roomNumber(input.getRoomN())
                 .roomFloor(input.getFloor())
                 .roomPrice(input.getPrice())
+                //TODO Use private func
+                //TODO and add validation
                 .bedSizes(input.getBedSizes().stream().map(bedType -> bedRepository.findByType(BedSize.getByCode(bedType)).get()).toList())
+                //TODO validate
                 .roomBathroomType(BathroomTypes.getByCode(input.getBathroomType()))
                 .build();
 
@@ -198,26 +207,67 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public UpdateRoomOutput updateRoom(UpdateRoomInput input) {
         log.info("Start updateRoom input: {}", input.toString());
-        UpdateRoomOutput result = UpdateRoomOutput.builder().build();
 
-        // roomsRepository.patchRoom();
+        //TODO Verify
+        Room existingRoom = roomRepository.findById(UUID.fromString(input.getId())).get();
 
 
-        log.info("End of updateRoom result: {}", result.toString());
-        return result;
+
+        Room updatedRoom = Room.builder()
+                .roomPrice(input.getPrice())
+                .roomNumber(input.getRoomN())
+                .roomFloor(input.getFloor())
+                //TODO Validation for BathroomType
+                .roomBathroomType(BathroomTypes.getByCode(input.getBathroomType()))
+                .bedSizes(mapBedsFromStrings(input.getBedSize()))
+                .build();
+
+        try {
+            JsonNode existingRoomNode = objectMapper.valueToTree(existingRoom);
+            JsonNode inputRoomNode = objectMapper.valueToTree(updatedRoom);
+            JsonMergePatch jsonMergePatchInput = JsonMergePatch.fromJson(inputRoomNode);
+            Room updatedResultRoom = objectMapper.treeToValue(jsonMergePatchInput.apply(existingRoomNode), Room.class);
+            roomRepository.save(updatedResultRoom);
+
+            UpdateRoomOutput result = UpdateRoomOutput.builder().id(String.valueOf(updatedResultRoom.getId())).build();
+
+            log.info("End updateRoom result: {}", result);
+            return result;
+
+        } catch (Exception e) {
+            log.error("Problem with Json Merge Patch");
+        }
+
+        log.error("Update Room Failed");
+        return null;
+
     }
+
+    private List<Bed> mapBedsFromStrings(List<String> bedStrings) {
+        return bedStrings == null || bedStrings.isEmpty()
+                ? null
+                : bedStrings
+                .stream()
+                .map(BedSize::getByCode)
+                //TODO add exception for non existent beds
+                .map(bedRepository::findByType)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+    }
+
 
     @Override
     public DeleteRoomOutput deleteRoom(DeleteRoomInput input) {
         log.info("Start deleteRoom input: {}", input.toString());
 
-        if(roomRepository.existsConstraintBedSizes(UUID.fromString(input.getId()))) {
+        if (roomRepository.existsConstraintBedSizes(UUID.fromString(input.getId()))) {
             roomRepository.deleteBedConstraint(UUID.fromString(input.getId()));
         }
         if (roomRepository.existsReservationConstraint(UUID.fromString(input.getId()))) {
             roomRepository.deleteReservationConstraint(UUID.fromString(input.getId()));
         }
-        if(roomRepository.existsById(UUID.fromString(input.getId()))) {
+        if (roomRepository.existsById(UUID.fromString(input.getId()))) {
             roomRepository.deleteById(UUID.fromString(input.getId()));
         }
         DeleteRoomOutput result = DeleteRoomOutput.builder().build();

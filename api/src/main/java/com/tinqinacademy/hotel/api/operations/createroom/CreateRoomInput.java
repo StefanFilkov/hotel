@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.createroom;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
-public class CreateRoomInput {
+public class CreateRoomInput implements OperationInput {
 
     private List<String> beds;
 
