@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.updateroom;
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.*;
 
 @Getter
@@ -7,6 +8,6 @@ import lombok.*;
 
 @Builder
 @ToString
-public class UpdateRoomOutput {
-    private final String id = "Updated room id";
+public class UpdateRoomOutput implements OperationOutput {
+
 }

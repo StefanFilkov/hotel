@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.getguestreport;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
-public class GetGuestReportInput {
+public class GetGuestReportInput implements OperationInput {
     private LocalDate startDate;
     private LocalDate endDate;
 

@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.editroom;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
-public class EditRoomInput {
+public class EditRoomInput implements OperationInput {
     @JsonIgnore
     private String id;
 

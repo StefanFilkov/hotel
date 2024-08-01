@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.updateroom;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UpdateRoomInput {
+public class UpdateRoomInput implements OperationInput {
     private Integer bedCount;
     @Min(value = 0, message = "cannot be less than 0")
     @Max(value = 100, message = "cannot be more than 100")
