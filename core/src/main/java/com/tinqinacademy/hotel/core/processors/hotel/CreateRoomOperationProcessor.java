@@ -41,6 +41,10 @@ public class CreateRoomOperationProcessor extends BaseOperationProcessor impleme
 
     @Override
     public Either<Errors, CreateRoomOutput> process(CreateRoomInput input) {
+        return validateInput(input).flatMap(validated -> createRoom(input));
+
+    }
+    private Either<Errors, CreateRoomOutput> createRoom(CreateRoomInput input){
         return Try.of(() -> {
                     log.info("Start createRoom input: {}", input.toString());
 

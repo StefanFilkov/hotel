@@ -37,10 +37,14 @@ public class AddGuestsOperationProcessor extends BaseOperationProcessor implemen
 
     @Override
     public Either<Errors, AddGuestsOutput> process(AddGuestInput input) {
+
+    return validateInput(input).flatMap(validated->registerGuests(input));
+    }
+    private Either<Errors, AddGuestsOutput> registerGuests(AddGuestInput input) {
         return Try.of(() -> {
 
 
-                    log.info("Start registerUser input: {}", input.toString());
+                    log.info("Start registerGuests input: {}", input.toString());
 
                     List<Guest> unknownGuests = saveUnknownGuests(input.getGuests());
 
@@ -52,7 +56,7 @@ public class AddGuestsOperationProcessor extends BaseOperationProcessor implemen
                                     .toList())
                             .build();
 
-                    log.info("End of registerUser result: {}", result.toString());
+                    log.info("End of registerGuests result: {}", result.toString());
                     return result;
 
                 }).toEither()
@@ -60,9 +64,7 @@ public class AddGuestsOperationProcessor extends BaseOperationProcessor implemen
 
                         Case($(), errorMapper::mapErrors)
                 ));
-
     }
-
     private List<Guest> saveUnknownGuests(List<GuestInput> guestList) {
         log.info("Start saveUnknownGuests input: {}", guestList);
 

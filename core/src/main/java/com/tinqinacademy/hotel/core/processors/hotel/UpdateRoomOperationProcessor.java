@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.tinqinacademy.hotel.api.errors.Errors;
+import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdInput;
+import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
@@ -46,6 +48,9 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
 
     @Override
     public Either<Errors, UpdateRoomOutput> process(UpdateRoomInput input) {
+        return validateInput(input).flatMap(validated -> updateRoom(input));
+    }
+    private Either<Errors, UpdateRoomOutput> updateRoom(UpdateRoomInput input){
         return Try.of(() -> {
 
 
@@ -57,22 +62,21 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
                             .roomPrice(input.getPrice())
                             .roomNumber(input.getRoomN())
                             .roomFloor(input.getFloor())
-                            //TODO Validation for BathroomType
                             .roomBathroomType(BathroomTypes.getByCode(input.getBathroomType()))
                             .bedSizes(mapBedsFromStrings(input.getBedSize()))
                             .build();
 
 
-                        JsonNode existingRoomNode = objectMapper.valueToTree(existingRoom);
-                        JsonNode inputRoomNode = objectMapper.valueToTree(updatedRoom);
-                        JsonMergePatch jsonMergePatchInput = JsonMergePatch.fromJson(inputRoomNode);
-                        Room updatedResultRoom = objectMapper.treeToValue(jsonMergePatchInput.apply(existingRoomNode), Room.class);
-                        roomRepository.save(updatedResultRoom);
+                    JsonNode existingRoomNode = objectMapper.valueToTree(existingRoom);
+                    JsonNode inputRoomNode = objectMapper.valueToTree(updatedRoom);
+                    JsonMergePatch jsonMergePatchInput = JsonMergePatch.fromJson(inputRoomNode);
+                    Room updatedResultRoom = objectMapper.treeToValue(jsonMergePatchInput.apply(existingRoomNode), Room.class);
+                    roomRepository.save(updatedResultRoom);
 
-                        UpdateRoomOutput result = UpdateRoomOutput.builder().id(String.valueOf(updatedResultRoom.getId())).build();
+                    UpdateRoomOutput result = UpdateRoomOutput.builder().id(String.valueOf(updatedResultRoom.getId())).build();
 
-                        log.info("End updateRoom result: {}", result);
-                        return result;
+                    log.info("End updateRoom result: {}", result);
+                    return result;
 
                 }).toEither()
                 .mapLeft(throwable -> Match(throwable).of(
@@ -80,6 +84,7 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
                         Case($(), errorMapper::mapErrors)
                 ));
     }
+
     private List<Bed> mapBedsFromStrings(List<String> bedStrings) {
         return bedStrings == null || bedStrings.isEmpty()
                 ? null

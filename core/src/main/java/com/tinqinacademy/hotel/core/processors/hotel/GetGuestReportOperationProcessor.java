@@ -6,11 +6,9 @@ import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportInput
 import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportOperation;
 import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportOutput;
 import com.tinqinacademy.hotel.core.errorsmapper.ErrorMapper;
-import com.tinqinacademy.hotel.core.exceptions.RoomNotFoundException;
 import com.tinqinacademy.hotel.core.processors.BaseOperationProcessor;
 import com.tinqinacademy.hotel.persistence.entities.Guest;
 import com.tinqinacademy.hotel.persistence.repository.GuestRepository;
-import io.vavr.Predicates;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import jakarta.validation.Validator;
@@ -36,42 +34,45 @@ public class GetGuestReportOperationProcessor extends BaseOperationProcessor imp
 
     @Override
     public Either<Errors, GetGuestReportOutput> process(GetGuestReportInput input) {
+        return validateInput(input).flatMap(validated -> getGuestReport(input));
+
+    }
+    private Either<Errors, GetGuestReportOutput> getGuestReport(GetGuestReportInput input) {
         return Try.of(() -> {
-            log.info("Start getRegisteredUser input: {}", input.toString());
+                    log.info("Start getGuestReport input: {}", input.toString());
 
-            Set<Guest> allGuestsInTimePeriod = new HashSet<>(guestRepository.findByStartDateAndEndDate(input.getStartDate(), input.getEndDate()));
+                    Set<Guest> allGuestsInTimePeriod = new HashSet<>(guestRepository.findByStartDateAndEndDate(input.getStartDate(), input.getEndDate()));
 
-            List<Specification<Guest>> specifications = new ArrayList<>();
-            specifications.add(hasFirstName(input.getFirstName()));
-            specifications.add(hasLastName(input.getLastName()));
-            specifications.add(hasCardNumber(input.getCardIdN()));
-            specifications.add(hasCardIssueAuthority(input.getCardIssueAuthority()));
-            specifications.add(hasCardValidity(input.getCardValidityDate()));
-            specifications.add(hasCardIssueDate(input.getCardIssueDate()));
-            specifications.add(hasBirthDate(input.getBirthdate()));
+                    List<Specification<Guest>> specifications = new ArrayList<>();
+                    specifications.add(hasFirstName(input.getFirstName()));
+                    specifications.add(hasLastName(input.getLastName()));
+                    specifications.add(hasCardNumber(input.getCardIdN()));
+                    specifications.add(hasCardIssueAuthority(input.getCardIssueAuthority()));
+                    specifications.add(hasCardValidity(input.getCardValidityDate()));
+                    specifications.add(hasCardIssueDate(input.getCardIssueDate()));
+                    specifications.add(hasBirthDate(input.getBirthdate()));
 
-            List<Specification<Guest>> enteredFields = specifications.stream().filter(Objects::nonNull).toList();
+                    List<Specification<Guest>> enteredFields = specifications.stream().filter(Objects::nonNull).toList();
 
-            Specification<Guest> finalSpecification = specificationBuilder(enteredFields);
+                    Specification<Guest> finalSpecification = specificationBuilder(enteredFields);
 
-            Set<Guest> filteredGuests = new HashSet<>(guestRepository.findAll(finalSpecification));
+                    Set<Guest> filteredGuests = new HashSet<>(guestRepository.findAll(finalSpecification));
 
-            List<Guest> resultGuests = allGuestsInTimePeriod.stream()
-                    .filter(filteredGuests::contains)
-                    .toList();
+                    List<Guest> resultGuests = allGuestsInTimePeriod.stream()
+                            .filter(filteredGuests::contains)
+                            .toList();
 
-            GetGuestReportOutput result = GetGuestReportOutput
-                    .builder()
-                    .data(resultGuests.stream().map(request -> conversionService.convert(request, GuestOutput.class)).toList())
-                    .build();
+                    GetGuestReportOutput result = GetGuestReportOutput
+                            .builder()
+                            .data(resultGuests.stream().map(request -> conversionService.convert(request, GuestOutput.class)).toList())
+                            .build();
 
-            log.info("End of getRegisteredUser result: {}", result.toString());
-            return result;
-        }).toEither()
+                    log.info("End of getGuestReport result: {}", result.toString());
+                    return result;
+                }).toEither()
                 .mapLeft(throwable -> Match(throwable).of(
                         Case($(), errorMapper::mapErrors)
                 ));
-
     }
 
     private Specification<Guest> specificationBuilder(List<Specification<Guest>> specifications) {

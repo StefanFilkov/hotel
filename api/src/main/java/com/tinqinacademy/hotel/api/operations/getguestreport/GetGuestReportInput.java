@@ -1,10 +1,12 @@
 package com.tinqinacademy.hotel.api.operations.getguestreport;
 
 import com.tinqinacademy.hotel.api.base.OperationInput;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -13,22 +15,33 @@ import java.util.List;
 @Builder
 @ToString
 public class GetGuestReportInput implements OperationInput {
+    @NotNull
     private LocalDate startDate;
+    @NotNull
     private LocalDate endDate;
 
+    @Size(max = 15, message = "invalid name")
     private String firstName;
+    @Size(max = 15, message = "invalid name")
     private String lastName;
 
+    @Size(max = 15, message = "string must be >0 and <16")
     private String cardIssueDate;
+    @Size(max = 15, message = "string must be >0 and <16")
     private String cardValidityDate;
+
+    @Size(max = 15, message = "string must be >0 and <16")
     private String cardIdN;
+    @Size(max = 15, message = "string must be >0 and <16")
     private String cardIssueAuthority;
+
+    @Size(max = 15, message = "string must be >0 and <16")
     private String birthdate;
-
+    @Size(max = 15, message = "string must be >0 and <16")
     private String phoneN;
-    private String roomN;
 
-    private List<String> data;
+    @Size(max = 15, message = "string must be >0 and <16")
+    private String roomN;
 
 
 }

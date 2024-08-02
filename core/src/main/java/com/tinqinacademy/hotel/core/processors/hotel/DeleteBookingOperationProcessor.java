@@ -32,19 +32,23 @@ public class DeleteBookingOperationProcessor extends BaseOperationProcessor impl
 
     @Override
     public Either<Errors, DeleteBookingByIdOutput> process(DeleteBookingByIdInput input) {
+        return validateInput(input).flatMap(validated -> deleteBooking(input));
+    }
+
+    private Either<Errors, DeleteBookingByIdOutput> deleteBooking(DeleteBookingByIdInput input) {
         return Try.of(()->{
-            log.info("Start deleteBooking with id: {}", input);
+                    log.info("Start deleteBooking with id: {}", input);
 
 
-            reservationRepository.findById(UUID.fromString(input.getId()))
-                    .orElseThrow(() -> new RoomNotFoundException(input.getId()));
+                    reservationRepository.findById(UUID.fromString(input.getId()))
+                            .orElseThrow(() -> new RoomNotFoundException(input.getId()));
 
-            reservationRepository.deleteById(UUID.fromString(input.getId()));
-            DeleteBookingByIdOutput result = DeleteBookingByIdOutput.builder().build();
+                    reservationRepository.deleteById(UUID.fromString(input.getId()));
+                    DeleteBookingByIdOutput result = DeleteBookingByIdOutput.builder().build();
 
-            log.info("End of deleteBooking");
-            return result;
-        }).toEither()
+                    log.info("End of deleteBooking");
+                    return result;
+                }).toEither()
                 .mapLeft(throwable -> Match(throwable).of(
                         Case($(Predicates.instanceOf(RoomNotFoundException.class)), errorMapper::mapErrors),
                         Case($(), errorMapper::mapErrors)

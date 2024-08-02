@@ -1,10 +1,10 @@
 package com.tinqinacademy.hotel.api.operations.createroom;
 
 import com.tinqinacademy.hotel.api.base.OperationInput;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
+import com.tinqinacademy.hotel.api.validation.bathroomtype.BathroomTypeValidation;
+import com.tinqinacademy.hotel.api.validation.bedsize.BedSizeValidation;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,9 +18,10 @@ import java.util.List;
 @ToString
 public class CreateRoomInput implements OperationInput {
 
-    private List<String> beds;
+    @NotBlank
+    private List< @BedSizeValidation String> beds;
 
-    @Size(min = 0, max = 12, message = "invalid string")
+    @BathroomTypeValidation
     private String bathroomType;
 
     @Min(value = 0, message = "cannot be less than 0")

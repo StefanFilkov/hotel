@@ -72,7 +72,7 @@ public class RoomsController extends BaseController {
 
 
     @GetMapping(URLMappings.GET_ROOM_BY_ID)
-    public ResponseEntity<?> getRoomById(@PathVariable UUID roomId) {
+    public ResponseEntity<?> getRoomById(@PathVariable String roomId) {
         GetRoomByIdInput roomsServiceRoomById = GetRoomByIdInput
                 .builder()
                 .id(String.valueOf(roomId))
