@@ -1,9 +1,10 @@
-package com.tinqinacademy.hotel.api.operations.getroom;
+package com.tinqinacademy.hotel.api.operations.getfreerooms;
 
 import com.tinqinacademy.hotel.api.base.OperationInput;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -11,11 +12,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @ToString
-public class GetRoomInput implements OperationInput {
+public class GetFreeRoomsInput implements OperationInput {
+    private String id;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Integer bedCount;
-    private String bedTypes;
+    private List<String> bedSizes;
     private String bathroomTypes;
 
 }

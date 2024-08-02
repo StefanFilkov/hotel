@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.api.operations.getroom;
+package com.tinqinacademy.hotel.api.operations.getfreerooms;
 
 import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.*;
@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
-public class GetRoomOutput implements OperationOutput {
+public class GetFreeRoomsOutput implements OperationOutput {
     private List<String> ids;
 }
