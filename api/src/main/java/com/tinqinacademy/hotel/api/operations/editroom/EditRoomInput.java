@@ -2,6 +2,8 @@ package com.tinqinacademy.hotel.api.operations.editroom;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.hotel.api.base.OperationInput;
+import com.tinqinacademy.hotel.api.validation.bathroomtype.BathroomTypeValidation;
+import com.tinqinacademy.hotel.api.validation.bedsize.BedSizeValidation;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -21,7 +23,7 @@ public class EditRoomInput implements OperationInput {
     @JsonIgnore
     private String id;
 
-    private List<String> bedSizes;
+    private List< @BedSizeValidation String> bedSizes;
 
 
     @Min(value = 0, message = "cannot be less than 0")
@@ -29,11 +31,10 @@ public class EditRoomInput implements OperationInput {
     private Integer floor;
 
 
-    @Size(max = 12, message = "invalid string")
+    @BathroomTypeValidation
     private String bathroomType;
 
-    @Size(max = 12, message = "invalid string")
-    @Size(max = 12, message = "invalid string")
+    @Size(max = 12, message = "invalid room Number")
     private String roomN;
 
     @Digits(integer = 4, fraction = 2, message = "invalid number")

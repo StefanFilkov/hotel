@@ -44,6 +44,10 @@ public class ReserveRoomOperationProcessor extends BaseOperationProcessor implem
 
     @Override
     public Either<Errors, ReserveRoomByIdOutput> process(ReserveRoomByIdInput input) {
+        return validateInput(input).flatMap(validated -> bookRoom(input));
+    }
+
+    private Either<Errors, ReserveRoomByIdOutput> bookRoom(ReserveRoomByIdInput input) {
         return Try.of(() -> {
                     log.info("Start of bookRoom");
 

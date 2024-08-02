@@ -39,6 +39,10 @@ public class RemoveRoomOperationProcessor extends BaseOperationProcessor impleme
 
     @Override
     public Either<Errors, DeleteRoomOutput> process(DeleteRoomInput input) {
+       return validateInput(input).flatMap(validated -> deleteRoom(input));
+
+    }
+    private Either<Errors, DeleteRoomOutput> deleteRoom(DeleteRoomInput input){
         return Try.of(() -> {
                             log.info("Start deleteRoom input: {}", input.toString());
 

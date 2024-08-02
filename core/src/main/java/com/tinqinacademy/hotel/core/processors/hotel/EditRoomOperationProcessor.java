@@ -40,21 +40,21 @@ public class EditRoomOperationProcessor extends BaseOperationProcessor implement
 
     @Override
     public Either<Errors, EditRoomOutput> process(EditRoomInput input) {
+        return validateInput(input).flatMap(validated -> editRoom(input));
+    }
+
+    private Either<Errors, EditRoomOutput> editRoom(EditRoomInput input) {
         return Try.of(() -> {
                     log.info("Start editRoom input: {}", input);
-                    //TODO move to private method
                     Room existingRoom = roomRepository.findById(UUID.fromString(input.getId()))
                             .orElseThrow(() -> new RoomNotFoundException(input.getId()));
 
                     input.setId(String.valueOf(existingRoom.getId()));
                     Room room = conversionService.convert(input, Room.RoomBuilder.class)
-
-                            //TODO Use private func
-                            //TODO and add validation
-                            .bedSizes(input.getBedSizes().stream().map(bedType -> bedRepository.findByType(BedSize.getByCode(bedType))
+                            .bedSizes(input.getBedSizes()
+                                    .stream()
+                                    .map(bedType -> bedRepository.findByType(BedSize.getByCode(bedType))
                                     .orElseThrow( () -> new BedTypeNotValidException(bedType))).toList())
-
-                            //TODO validate
                             .roomBathroomType(BathroomTypes.getByCode(input.getBathroomType()))
                             .build();
 

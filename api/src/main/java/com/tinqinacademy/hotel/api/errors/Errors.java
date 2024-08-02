@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class Errors implements ErrorsWrapper {
 
-
+    @Builder.Default
     private List<OperationError> errors = new ArrayList<>();
 
     private HttpStatus status;
@@ -22,7 +22,7 @@ public class Errors implements ErrorsWrapper {
 
     @Override
     public void addError(OperationError error) {
-
+        errors.add(error);
     }
 
     @Override
@@ -30,30 +30,9 @@ public class Errors implements ErrorsWrapper {
         return status;
     }
 
-
-//    @Override
-//    public void addError(Error error) {
-//        this.errors.add(error);
-//    }
-//
-//    @Override
-//    public List<Error> getErrors() {
-//        return errors;
-//    }
-//
-//
-//    @Override
-//    public ResponseEntity<?> refactorErrors(MethodArgumentNotValidException exception, HttpStatus httpCode) {
-//        Errors errors = Errors.builder().build();
-//        exception
-//                .getBindingResult()
-//                .getFieldErrors()
-//                .forEach(fieldError -> errors.addError(Error.builder()
-//                        .message(String.format("'%s' %s", fieldError.getField(), fieldError.getDefaultMessage()))
-//                        .errorCode(httpCode)
-//                        .build()));
-//        return ResponseEntity.status(httpCode).body(errors);
-//    }
-
+    @Override
+    public List<OperationError> getErrors() {
+        return errors;
+    }
 
 }

@@ -40,6 +40,11 @@ public class GetRoomByIdOperationProcessor extends BaseOperationProcessor implem
 
     @Override
     public Either<Errors, GetRoomByIdOutput> process(GetRoomByIdInput input) {
+        return validateInput(input).flatMap(validated -> getRoomById(input));
+
+    }
+
+    private Either<Errors, GetRoomByIdOutput> getRoomById(GetRoomByIdInput input) {
         return Try.of(() -> {
                     log.info("Start getRoomById input: {}", input.toString());
                     UUID id = UUID.fromString(input.getId());
@@ -65,7 +70,6 @@ public class GetRoomByIdOperationProcessor extends BaseOperationProcessor implem
                         Case($(Predicates.instanceOf(RoomNotFoundException.class)), errorMapper::mapErrors),
                         Case($(), errorMapper::mapErrors)
                 ));
-
     }
 
     private List<LocalDate> getDatesOccupied(Reservation reservation) {
@@ -79,4 +83,5 @@ public class GetRoomByIdOperationProcessor extends BaseOperationProcessor implem
         log.info("End getRoomById result: {}", result);
         return result;
     }
+
 }

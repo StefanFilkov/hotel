@@ -37,6 +37,11 @@ public class GetFreeRoomsOperationProcessor extends BaseOperationProcessor imple
 
     @Override
     public Either<Errors, GetFreeRoomsOutput> process(GetFreeRoomsInput input) {
+        return validateInput(input).flatMap(validated -> GetRoomFreeRooms(input));
+
+    }
+
+    private Either<Errors, GetFreeRoomsOutput> GetRoomFreeRooms(GetFreeRoomsInput input) {
         return Try.of(() -> {
                     log.info("Processing GetRoomFreeRooms");
 
@@ -78,8 +83,8 @@ public class GetFreeRoomsOperationProcessor extends BaseOperationProcessor imple
                         Case($(Predicates.instanceOf(RoomNotFoundException.class)), errorMapper::mapErrors),
                         Case($(), errorMapper::mapErrors)
                 ));
-
     }
+
     private Integer getTotalCapacity(List<String> input) {
         Integer totalCapacity = 0;
         List<BedSize> bedSizes = input.stream()
