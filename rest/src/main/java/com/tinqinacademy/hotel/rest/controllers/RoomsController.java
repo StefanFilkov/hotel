@@ -1,61 +1,39 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
-import com.tinqinacademy.hotel.api.models.outputs.RoomOutput;
-import com.tinqinacademy.hotel.api.operations.addroom.RoomInput;
+import com.tinqinacademy.hotel.api.errors.Errors;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdInput;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdOutput;
-import com.tinqinacademy.hotel.api.operations.checkroomavailability.CheckRoomAvailabilityOutput;
 import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdInput;
 import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdOutput;
-import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
-import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
+import com.tinqinacademy.hotel.api.operations.getfreerooms.GetFreeRoomsInput;
+import com.tinqinacademy.hotel.api.operations.getfreerooms.GetFreeRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdInput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdOutput;
-import com.tinqinacademy.hotel.core.services.RoomsService;
+import com.tinqinacademy.hotel.core.processors.hotel.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpStatus;
+import io.vavr.control.Either;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-public class RoomsController {
+public class RoomsController extends BaseController {
 
-    private final RoomsService roomsService;
+    private final GetFreeRoomsOperationProcessor getFreeRoomsOperationProcessor;
+    private final ReserveRoomOperationProcessor reserveRoomOperationProcessor;
+    private final GetRoomByIdOperationProcessor getRoomByIdOperationProcessor;
+    private final DeleteBookingOperationProcessor deleteBookingOperationProcessor;
 
-    public RoomsController(RoomsService roomsService) {
-        this.roomsService = roomsService;
-    }
-
-    @Operation(
-            summary = "Edits a room",
-            description = "Edits a room",
-            responses = {
-                    @ApiResponse(responseCode = "404", description = "Room does not exist"),
-                    @ApiResponse(responseCode = "200", description = "Room edited successfully")
-            })
-    @PutMapping()
-    public ResponseEntity<EditRoomOutput> editRoom() {
-        return new ResponseEntity<>(roomsService.editRoom(), HttpStatus.OK);
-    }
-
-    @Operation(
-            summary = "Removes a room",
-            description = "Removes a room",
-            responses = {
-                    @ApiResponse(responseCode = "404", description = "Room does not exist"),
-                    @ApiResponse(responseCode = "200", description = "Room deleted")
-
-            })
-    @DeleteMapping
-    public ResponseEntity<DeleteRoomOutput> removeRoom() {
-        return new ResponseEntity<>(roomsService.removeRoom(), HttpStatus.OK);
+    public RoomsController(GetFreeRoomsOperationProcessor getFreeRoomsOperationProcessor, ReserveRoomOperationProcessor reserveRoomOperationProcessor, GetRoomByIdOperationProcessor getRoomByIdOperationProcessor, DeleteBookingOperationProcessor deleteBookingOperationProcessor) {
+        this.getFreeRoomsOperationProcessor = getFreeRoomsOperationProcessor;
+        this.reserveRoomOperationProcessor = reserveRoomOperationProcessor;
+        this.getRoomByIdOperationProcessor = getRoomByIdOperationProcessor;
+        this.deleteBookingOperationProcessor = deleteBookingOperationProcessor;
     }
 
 
@@ -68,64 +46,51 @@ public class RoomsController {
             description = "Books a room"
     )
     @PostMapping(URLMappings.POST_BOOK_ROOM_BY_ID)
-    public ResponseEntity<ReserveRoomByIdOutput> bookRoom(@RequestBody ReserveRoomByIdInput input) {
-        return new ResponseEntity<>(roomsService.reserveRoom(input), HttpStatus.OK);
+    public ResponseEntity<?> bookRoom(@RequestBody ReserveRoomByIdInput input) {
+        Either<Errors, ReserveRoomByIdOutput> result = reserveRoomOperationProcessor.process(input);
+        return handleResult(result);
     }
 
 
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success"),
-            @ApiResponse(responseCode = "404", description = "Room not found")
-    })
-    @Operation(summary = "Checks if room is available", description = "Checks if room is available")
-    @GetMapping("/check")
-    public ResponseEntity<CheckRoomAvailabilityOutput> checkRoomsAvailability() {
-        return new ResponseEntity<>(roomsService.checkRoomAvailability(), HttpStatus.OK);
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success"),
-            @ApiResponse(responseCode = "404", description = "Room not found")
-    })
-    @Operation(
-            summary = "Adds a room",
-            description = "Adds a room"
-    )
-    @PostMapping
-    public ResponseEntity<RoomOutput> addRoom(@RequestBody RoomInput input) {
-        RoomOutput result = roomsService.addRoom(input);
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
-    }
-
-    @GetMapping
-    public ResponseEntity<GetRoomOutput> getRoom(@RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam Integer bedCount, @RequestParam String bedType, @RequestParam String bathroomType){
-        GetRoomInput input= GetRoomInput.builder()
+    @GetMapping(URLMappings.GET_ROOM)
+    public ResponseEntity<?> getRooms(@RequestParam LocalDate startDate,
+                                      @RequestParam LocalDate endDate,
+                                      @RequestParam List<String> BedTypes,
+                                      @RequestParam String bathroomType) {
+        GetFreeRoomsInput input = GetFreeRoomsInput
+                .builder()
                 .endDate(endDate)
                 .bathroomTypes(bathroomType)
                 .startDate(startDate)
-                .bedTypes(bedType)
-                .bedCount(bedCount)
+                .bedSizes(BedTypes)
                 .build();
-        return new ResponseEntity<>(roomsService.getRoom(input), HttpStatus.OK);
+
+        Either<Errors, GetFreeRoomsOutput> result = getFreeRoomsOperationProcessor.process(input);
+        return handleResult(result);
 
     }
 
 
     @GetMapping(URLMappings.GET_ROOM_BY_ID)
-    public ResponseEntity<GetRoomByIdOutput> getRoomById(@PathVariable UUID roomId){
-        GetRoomByIdInput roomsServiceRoomById = GetRoomByIdInput.builder().id(String.valueOf(roomId)).build();
-        return new ResponseEntity<>(roomsService.getRoomById(roomsServiceRoomById), HttpStatus.OK);
-    }
+    public ResponseEntity<?> getRoomById(@PathVariable UUID roomId) {
+        GetRoomByIdInput roomsServiceRoomById = GetRoomByIdInput
+                .builder()
+                .id(String.valueOf(roomId))
+                .build();
 
-    @PostMapping("/{id}")
-    public ResponseEntity<Void> bookRoomById(@PathVariable String id,@RequestBody ReserveRoomByIdInput input){
+        Either<Errors, GetRoomByIdOutput> result = getRoomByIdOperationProcessor.process(roomsServiceRoomById);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return handleResult(result);
     }
 
     @DeleteMapping(URLMappings.DELETE_BOOKING_BY_ID)
-    public ResponseEntity<DeleteBookingByIdOutput> deleteBookingById(@PathVariable String bookingId){
-        return new ResponseEntity<>(roomsService.deleteBooking(DeleteBookingByIdInput.builder().id(bookingId).build()),HttpStatus.OK);
+    public ResponseEntity<?> deleteBookingById(@PathVariable String bookingId) {
+        DeleteBookingByIdInput input = DeleteBookingByIdInput
+                .builder()
+                .id(bookingId)
+                .build();
+        Either<Errors, DeleteBookingByIdOutput> result = deleteBookingOperationProcessor.process(input);
+        return handleResult(result);
 
     }
 }

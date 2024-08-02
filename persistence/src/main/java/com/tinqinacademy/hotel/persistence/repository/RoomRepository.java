@@ -3,8 +3,9 @@ package com.tinqinacademy.hotel.persistence.repository;
 import com.tinqinacademy.hotel.persistence.entities.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,6 +38,18 @@ public interface RoomRepository extends JpaRepository<Room, UUID> {
 """, nativeQuery = true)
     void deleteReservationConstraint(UUID uuid);
 
+    @Query(value = """
+        SELECT id FROM rooms r
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM reservations res
+            WHERE res.room_id = r.id
+              AND res.start_date <= :start
+              AND res.end_date >= :end
+        );
+        
+            """, nativeQuery = true)
+    List<UUID> findAllFreeRoomsByStartAndEndDate(LocalDate start, LocalDate end);
 
 
     Optional<Room> findByRoomNumber (String roomNumber);

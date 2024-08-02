@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
+import com.tinqinacademy.hotel.api.errors.Errors;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
@@ -12,33 +13,44 @@ import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestInput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
-import com.tinqinacademy.hotel.core.services.SystemService;
+import com.tinqinacademy.hotel.core.processors.hotel.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.vavr.control.Either;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping
-public class SystemController {
+public class SystemController extends BaseController {
 
-    private final SystemService systemService;
+    private final AddGuestsOperationProcessor addGuestsOperationProcessor;
+    private final GetGuestReportOperationProcessor getGuestReportOperationProcessor;
+    private final CreateRoomOperationProcessor createRoomOperationProcessor;
+    private final EditRoomOperationProcessor editRoomOperationProcessor;
+    private final UpdateRoomOperationProcessor updateRoomOperationProcessor;
+    private final DeleteBookingOperationProcessor deleteBookingOperationProcessor;
+    private final RemoveRoomOperationProcessor removeRoomOperationProcessor;
 
-    @Autowired
-    public SystemController(SystemService systemService) {
-        this.systemService = systemService;
+    public SystemController(AddGuestsOperationProcessor addGuestsOperationProcessor, GetGuestReportOperationProcessor getGuestReportOperationProcessor, CreateRoomOperationProcessor createRoomOperationProcessor, EditRoomOperationProcessor editRoomOperationProcessor, UpdateRoomOperationProcessor updateRoomOperationProcessor, DeleteBookingOperationProcessor deleteBookingOperationProcessor, RemoveRoomOperationProcessor removeRoomOperationProcessor) {
+        super();
+        this.addGuestsOperationProcessor = addGuestsOperationProcessor;
+        this.getGuestReportOperationProcessor = getGuestReportOperationProcessor;
+        this.createRoomOperationProcessor = createRoomOperationProcessor;
+        this.editRoomOperationProcessor = editRoomOperationProcessor;
+        this.updateRoomOperationProcessor = updateRoomOperationProcessor;
+        this.deleteBookingOperationProcessor = deleteBookingOperationProcessor;
+        this.removeRoomOperationProcessor = removeRoomOperationProcessor;
     }
 
     @PostMapping(URLMappings.POST_REGISTER_VISITOR)
-    public ResponseEntity<AddGuestsOutput> registerUser(@RequestBody AddGuestInput input) {
-        return new ResponseEntity<>(systemService.addGuests(input), HttpStatus.OK);
+    public ResponseEntity<?> registerVisitors(@RequestBody AddGuestInput input) {
+        Either<Errors, AddGuestsOutput> result = addGuestsOperationProcessor.process(input);
 
+        return handleResult(result);
     }
 
 
@@ -51,7 +63,7 @@ public class SystemController {
             description = "Implemented options:"
     )
     @GetMapping(URLMappings.GET_REPORT)
-    public ResponseEntity<GetGuestReportOutput> getRegisteredUser(@RequestParam LocalDate startDate,
+    public ResponseEntity<?> getRegisteredUser(@RequestParam LocalDate startDate,
                                                                   @RequestParam LocalDate endDate,
                                                                   @RequestParam(required = false) String roomNumber,
                                                                   @RequestParam(required = false) String cardIdN,
@@ -77,29 +89,35 @@ public class SystemController {
                 .endDate(endDate)
                 .birthdate(birthdate)
                 .build();
-        return new ResponseEntity<>(systemService.getGuestReport(input), HttpStatus.OK);
+        Either<Errors, GetGuestReportOutput> result = getGuestReportOperationProcessor.process(input);
+
+        return handleResult(result);
     }
 
     @PostMapping(URLMappings.POST_CREATE_ROOM)
-    public ResponseEntity<CreateRoomOutput> createRoom(@RequestBody CreateRoomInput input) {
-        return new ResponseEntity<>(systemService.createRoom(input), HttpStatus.OK);
+    public ResponseEntity<?> createRoom(@RequestBody CreateRoomInput input) {
+        Either<Errors, CreateRoomOutput> result = createRoomOperationProcessor.process(input);
+        return handleResult(result);
     }
 
     @PutMapping(URLMappings.PUT_UPDATE_ROOM)
-    public ResponseEntity<EditRoomOutput> editRoom(@RequestBody @Valid EditRoomInput input, @PathVariable String roomId) {
+    public ResponseEntity<?> editRoom(@RequestBody @Valid EditRoomInput input, @PathVariable String roomId) {
         input.setId(roomId);
-        return new ResponseEntity<>(systemService.editRoom(input), HttpStatus.OK);
+        Either<Errors, EditRoomOutput> result = editRoomOperationProcessor.process(input);
+        return handleResult(result);
     }
 
     @PatchMapping(URLMappings.PATCH_EDIT_ROOM)
-    public ResponseEntity<UpdateRoomOutput> editRoom(@RequestBody UpdateRoomInput input, @PathVariable String roomId) {
+    public ResponseEntity<?> editRoom(@RequestBody UpdateRoomInput input, @PathVariable String roomId) {
         input.setId(roomId);
-        return new ResponseEntity<>(systemService.updateRoom(input), HttpStatus.OK);
+        Either<Errors, UpdateRoomOutput> result = updateRoomOperationProcessor.process(input);
+        return handleResult(result);
     }
 
     @DeleteMapping(URLMappings.DELETE_ROOM)
-    public ResponseEntity<DeleteRoomOutput> deleteRoom(@PathVariable String roomId) {
+    public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
         DeleteRoomInput input = DeleteRoomInput.builder().id(roomId).build();
-        return new ResponseEntity<>(systemService.deleteRoom(input), HttpStatus.OK);
+        Either<Errors, DeleteRoomOutput> result = removeRoomOperationProcessor.process(input);
+        return handleResult(result);
     }
 }
