@@ -1,7 +1,0 @@
-package com.tinqinacademy.hotel.api.exceptions;
-
-public class RoomNotFoundException extends RuntimeException {
-    public RoomNotFoundException(String message) {
-        super(message);
-    }
-}
