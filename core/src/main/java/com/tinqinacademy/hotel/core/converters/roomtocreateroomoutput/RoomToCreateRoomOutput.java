@@ -15,6 +15,7 @@ public class RoomToCreateRoomOutput implements Converter<Room, CreateRoomOutput>
                 .roomFloor(source.getRoomFloor())
                 .roomBathroomType(source.getRoomBathroomType().toString())
                 .roomPrice(source.getRoomPrice())
-                .roomNumber(source.getRoomNumber()).build();
+                .roomNumber(source.getRoomNumber())
+                .build();
     }
 }

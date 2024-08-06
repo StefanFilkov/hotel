@@ -2,12 +2,16 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.errors.Errors;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdInput;
+import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdOperation;
 import com.tinqinacademy.hotel.api.operations.bookroombyid.ReserveRoomByIdOutput;
 import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdInput;
+import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdOperation;
 import com.tinqinacademy.hotel.api.operations.deletebookingbyid.DeleteBookingByIdOutput;
 import com.tinqinacademy.hotel.api.operations.getfreerooms.GetFreeRoomsInput;
+import com.tinqinacademy.hotel.api.operations.getfreerooms.GetFreeRoomsOperation;
 import com.tinqinacademy.hotel.api.operations.getfreerooms.GetFreeRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdInput;
+import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdOperation;
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdOutput;
 import com.tinqinacademy.hotel.core.processors.hotel.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,12 +28,12 @@ import java.util.UUID;
 @RestController
 public class RoomsController extends BaseController {
 
-    private final GetFreeRoomsOperationProcessor getFreeRoomsOperationProcessor;
-    private final ReserveRoomOperationProcessor reserveRoomOperationProcessor;
-    private final GetRoomByIdOperationProcessor getRoomByIdOperationProcessor;
-    private final DeleteBookingOperationProcessor deleteBookingOperationProcessor;
+    private final GetFreeRoomsOperation getFreeRoomsOperationProcessor;
+    private final ReserveRoomByIdOperation reserveRoomOperationProcessor;
+    private final GetRoomByIdOperation getRoomByIdOperationProcessor;
+    private final DeleteBookingByIdOperation deleteBookingOperationProcessor;
 
-    public RoomsController(GetFreeRoomsOperationProcessor getFreeRoomsOperationProcessor, ReserveRoomOperationProcessor reserveRoomOperationProcessor, GetRoomByIdOperationProcessor getRoomByIdOperationProcessor, DeleteBookingOperationProcessor deleteBookingOperationProcessor) {
+    public RoomsController(GetFreeRoomsOperation getFreeRoomsOperationProcessor, ReserveRoomByIdOperation reserveRoomOperationProcessor, GetRoomByIdOperation getRoomByIdOperationProcessor, DeleteBookingByIdOperation deleteBookingOperationProcessor) {
         this.getFreeRoomsOperationProcessor = getFreeRoomsOperationProcessor;
         this.reserveRoomOperationProcessor = reserveRoomOperationProcessor;
         this.getRoomByIdOperationProcessor = getRoomByIdOperationProcessor;

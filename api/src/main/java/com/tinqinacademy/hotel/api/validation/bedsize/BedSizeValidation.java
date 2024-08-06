@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = BedSizeValidator.class)
 public @interface BedSizeValidation {
-    String message() default "Invalid bed size";
+    String message() default "Invalid bed sizes ";
 
     Class<?>[] groups() default {};
 
