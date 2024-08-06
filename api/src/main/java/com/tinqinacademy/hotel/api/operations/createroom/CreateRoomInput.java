@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 public class CreateRoomInput implements OperationInput {
 
-    @NotBlank
+
     private List< @BedSizeValidation String> beds;
 
     @BathroomTypeValidation
