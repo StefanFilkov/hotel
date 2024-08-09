@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.converters.guesttoreportoutput;
+package com.tinqinacademy.hotel.core.converters.guestto;
 
 
 import com.tinqinacademy.hotel.api.models.outputs.GuestOutput;

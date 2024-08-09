@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.converters;
+package com.tinqinacademy.hotel.core.converters.roomto;
 
 import com.tinqinacademy.hotel.api.operations.getroombyid.GetRoomByIdOutput;
 import com.tinqinacademy.hotel.persistence.entities.Bed;

@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.converters;
+package com.tinqinacademy.hotel.core.converters.editroom;
 
 
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomInput;

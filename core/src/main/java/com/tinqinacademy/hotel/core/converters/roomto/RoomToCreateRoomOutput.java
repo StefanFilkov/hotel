@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.converters.roomtocreateroomoutput;
+package com.tinqinacademy.hotel.core.converters.roomto;
 
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.persistence.entities.Room;
