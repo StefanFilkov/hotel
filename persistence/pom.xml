@@ -11,12 +11,12 @@
     </parent>
 
     <artifactId>persistence</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>com.tinqinacademy.hotel</groupId>
             <artifactId>api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 

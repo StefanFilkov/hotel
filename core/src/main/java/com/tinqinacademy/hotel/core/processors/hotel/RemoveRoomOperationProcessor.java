@@ -7,8 +7,6 @@ import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.core.errorsmapper.ErrorMapper;
 import com.tinqinacademy.hotel.core.exceptions.RoomNotFoundException;
 import com.tinqinacademy.hotel.core.processors.BaseOperationProcessor;
-import com.tinqinacademy.hotel.persistence.entities.Reservation;
-import com.tinqinacademy.hotel.persistence.entities.Room;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
 import io.vavr.Predicates;
 import io.vavr.control.Either;
@@ -18,11 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static io.vavr.API.*;
 
