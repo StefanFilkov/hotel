@@ -2,18 +2,18 @@ package com.tinqinacademy.hotel.core.converters.editroom;
 
 
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomInput;
+import com.tinqinacademy.hotel.core.converters.LoggedConverter;
 import com.tinqinacademy.hotel.persistence.entities.Room;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
-public class EditRoomInputToRoomBuilder implements Converter<EditRoomInput,Room.RoomBuilder> {
+public class EditRoomInputToRoomBuilder extends LoggedConverter<EditRoomInput,Room.RoomBuilder> {
 
 
     @Override
-    public Room.RoomBuilder convert(EditRoomInput source) {
+    public Room.RoomBuilder convertTo(EditRoomInput source) {
         return Room
                 .builder()
                 .id(UUID.fromString(source.getId()))

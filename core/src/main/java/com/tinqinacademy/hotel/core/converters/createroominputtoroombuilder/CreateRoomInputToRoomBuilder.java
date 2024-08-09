@@ -2,13 +2,13 @@ package com.tinqinacademy.hotel.core.converters.createroominputtoroombuilder;
 
 
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomInput;
+import com.tinqinacademy.hotel.core.converters.LoggedConverter;
 import com.tinqinacademy.hotel.persistence.entities.Room;
 import com.tinqinacademy.hotel.persistence.models.enums.BathroomTypes;
-import org.springframework.core.convert.converter.Converter;
 
-public class CreateRoomInputToRoomBuilder implements Converter<CreateRoomInput, Room.RoomBuilder> {
+public class CreateRoomInputToRoomBuilder extends LoggedConverter<CreateRoomInput, Room.RoomBuilder> {
     @Override
-    public Room.RoomBuilder convert(CreateRoomInput source) {
+    public Room.RoomBuilder convertTo(CreateRoomInput source) {
         return Room
                 .builder()
                 .roomNumber(source.getRoomN())
