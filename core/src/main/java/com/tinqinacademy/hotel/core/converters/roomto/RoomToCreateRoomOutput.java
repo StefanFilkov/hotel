@@ -16,6 +16,7 @@ public class RoomToCreateRoomOutput extends LoggedConverter<Room, CreateRoomOutp
                 .roomFloor(source.getRoomFloor())
                 .roomBathroomType(source.getRoomBathroomType().toString())
                 .roomPrice(source.getRoomPrice())
-                .roomNumber(source.getRoomNumber()).build();
+                .roomNumber(source.getRoomNumber())
+                .build();
     }
 }

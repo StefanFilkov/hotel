@@ -10,14 +10,8 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>persistence</artifactId>
+    <artifactId>rest-export</artifactId>
+    <version>${revision}</version>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.tinqinacademy.hotel</groupId>
-            <artifactId>api</artifactId>
-            <version>${revision}</version>
-        </dependency>
-    </dependencies>
 
 </project>

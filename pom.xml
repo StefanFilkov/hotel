@@ -10,7 +10,8 @@
     </parent>
 
     <packaging>pom</packaging>
-    <groupId>com.tinqinacademy</groupId>
+
+    <groupId>com.tinqinacademy.hotel</groupId>
     <artifactId>hotel</artifactId>
     <version>${revision}</version>
 
@@ -23,6 +24,7 @@
         <module>persistence</module>
         <module>domain</module>
         <module>rest</module>
+        <module>rest-export</module>
     </modules>
 
 
@@ -32,7 +34,7 @@
         <web.mvc.version>2.6.0</web.mvc.version>
         <flatten.mvn.version>1.6.0</flatten.mvn.version>
         <jackson.databind.version>2.16.0</jackson.databind.version>
-        <jakarta.validation.version>3.1.0</jakarta.validation.version>
+            <jakarta.validation.version>3.1.0</jakarta.validation.version>
         <spring-jpa>3.3.1</spring-jpa>
         <postgresql.version>42.7.3</postgresql.version>
         <vavr>0.10.4</vavr>
@@ -44,10 +46,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
-
             <version>${vavr}</version>
         </dependency>
         <dependency>
@@ -74,15 +76,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.vavr</groupId>
-            <artifactId>vavr</artifactId>
-            <version>0.10.4</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-<!--            <version>${spring-jpa}</version>-->
+            <!--<version>${spring-jpa}</version>-->
         </dependency>
 
 
@@ -100,8 +96,8 @@
         </dependency>
 
         <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jdbc</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
 
         <dependency>
@@ -115,6 +111,20 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-server</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+
+
+
     </dependencies>
     <build>
         <plugins>

@@ -2,18 +2,23 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.errors.Errors;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomInput;
+import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
+import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOperation;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomInput;
+import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOperation;
 import com.tinqinacademy.hotel.api.operations.editroom.EditRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportInput;
+import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportOperation;
 import com.tinqinacademy.hotel.api.operations.getguestreport.GetGuestReportOutput;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestInput;
+import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestOperation;
 import com.tinqinacademy.hotel.api.operations.registeruser.AddGuestsOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
-import com.tinqinacademy.hotel.core.processors.hotel.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,24 +32,22 @@ import java.time.LocalDate;
 @RestController
 public class SystemController extends BaseController {
 
-    private final AddGuestsOperationProcessor addGuestsOperationProcessor;
-    private final GetGuestReportOperationProcessor getGuestReportOperationProcessor;
-    private final CreateRoomOperationProcessor createRoomOperationProcessor;
-    private final EditRoomOperationProcessor editRoomOperationProcessor;
-    private final UpdateRoomOperationProcessor updateRoomOperationProcessor;
-    private final DeleteBookingOperationProcessor deleteBookingOperationProcessor;
-    private final RemoveRoomOperationProcessor removeRoomOperationProcessor;
+    private final AddGuestOperation addGuestsOperationProcessor;
+    private final GetGuestReportOperation getGuestReportOperationProcessor;
+    private final CreateRoomOperation createRoomOperationProcessor;
+    private final EditRoomOperation editRoomOperationProcessor;
+    private final UpdateRoomOperation updateRoomOperationProcessor;
+    private final DeleteRoomOperation removeRoomOperationProcessor;
 
-    public SystemController(AddGuestsOperationProcessor addGuestsOperationProcessor, GetGuestReportOperationProcessor getGuestReportOperationProcessor, CreateRoomOperationProcessor createRoomOperationProcessor, EditRoomOperationProcessor editRoomOperationProcessor, UpdateRoomOperationProcessor updateRoomOperationProcessor, DeleteBookingOperationProcessor deleteBookingOperationProcessor, RemoveRoomOperationProcessor removeRoomOperationProcessor) {
-        super();
+    public SystemController(AddGuestOperation addGuestsOperationProcessor, GetGuestReportOperation getGuestReportOperationProcessor, CreateRoomOperation createRoomOperationProcessor, EditRoomOperation editRoomOperationProcessor, UpdateRoomOperation updateRoomOperationProcessor, DeleteRoomOperation removeRoomOperationProcessor) {
         this.addGuestsOperationProcessor = addGuestsOperationProcessor;
         this.getGuestReportOperationProcessor = getGuestReportOperationProcessor;
         this.createRoomOperationProcessor = createRoomOperationProcessor;
         this.editRoomOperationProcessor = editRoomOperationProcessor;
         this.updateRoomOperationProcessor = updateRoomOperationProcessor;
-        this.deleteBookingOperationProcessor = deleteBookingOperationProcessor;
         this.removeRoomOperationProcessor = removeRoomOperationProcessor;
     }
+
 
     @PostMapping(URLMappings.POST_REGISTER_VISITOR)
     public ResponseEntity<?> registerVisitors(@RequestBody AddGuestInput input) {

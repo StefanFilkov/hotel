@@ -7,11 +7,9 @@ import com.tinqinacademy.hotel.core.errorsmapper.ErrorMapper;
 import io.vavr.control.Either;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
 import java.util.Set;
 
 public class BaseOperationProcessor {

@@ -48,6 +48,7 @@ public class ErrorMapperService<E extends OperationError> implements ErrorMapper
         Errors result = Errors
                 .builder()
                 .errors(OpErrors)
+                .status(HttpStatus.BAD_REQUEST)
                 .build();
 
 
